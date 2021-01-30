@@ -1,0 +1,155 @@
+<html>
+<head>
+    <style>
+        *{
+            margin: 15px;
+        }
+        canvas{
+            border: 2px solid black;
+        }
+    
+    </style>
+    
+</head>
+<body>
+    <label><input type="range" min="4" max="20" id='inpEdg' value="6">
+    number of edges:<output id='outEdg'></output></label>
+    <br>
+    <label><input type="range" min="70" max="250" id='inpSq'>
+    out size:<output id='outSq'></output></label>
+    <br>    
+    <br>
+    <canvas width="400px" height="400px"></canvas>    
+    <canvas width="400px" height="400px" id='can2'></canvas>    
+</body>
+<script>
+//    Построение правильного многоугольника: 360 делится на кол-во граней, получаем угол;
+    
+    let inpSq=document.getElementById('inpSq');    
+    let inpEdg=document.getElementById('inpEdg');
+    let outSq=document.getElementById('outSq');    
+    let outEdg=document.getElementById('outEdg');    
+    inpSq.addEventListener('input',f1);
+    inpEdg.addEventListener('input',fEdg);
+    let canv=document.querySelector('canvas');
+    let canv2=document.getElementById('can2');
+    let ctx = canv.getContext('2d');
+    let ctx2 = canv2.getContext('2d'); 
+    
+    ctx2.strokeStyle = 'black';
+    ctx2.globalCompositeOperation = "multiply";
+    ctx2.globalAlpha = 0.433;
+    outSq.value=inpSq.value;
+    outEdg.value=inpEdg.value;    
+    let x=canv.width/2;
+    let y=canv.height/2;    
+    function startDraw(){
+        let nEdg=inpEdg.value;
+        let l1=inpSq.value;
+        let r1=Math.sqrt(Math.pow(l1,2)*2)/2;
+        let angle=360/nEdg*Math.PI/180;
+        let xl=Math.sin(angle/2)*r1;
+        let x1=x-xl;
+        let y1=y-Math.cos(angle/2)*r1;
+        ctx.save();
+        ctx.translate(x1,y1);
+        ctx.beginPath();
+        for(let i=0;i<nEdg;i++){
+            ctx.moveTo(0,0);
+            ctx.lineTo(xl*2,0);
+            ctx.stroke();
+            ctx.fillText(i,xl*2,0);
+            ctx.translate(xl*2,0);
+            ctx.rotate(angle);
+        }
+        ctx.restore();
+        ctx2.save();
+        ctx2.translate(x1,y1);
+        ctx2.beginPath();
+        for(let i=0;i<nEdg;i++){
+            ctx2.moveTo(0,0);
+            ctx2.lineTo(Math.round(xl*2)+0.5,0);
+            ctx2.stroke();
+            ctx2.fillText(i,xl*2,0);
+            ctx2.translate(Math.round(xl*2)+0.5,0);
+            ctx2.rotate(angle);
+        }
+        ctx2.restore();
+    }
+    startDraw();
+        
+    
+    function f1(t){
+        outSq.value=inpSq.value;
+        let nEdg=parseInt(inpEdg.value);
+        let angle=360/nEdg*Math.PI/180;
+        let l1=inpSq.value;
+        let r1=Math.sqrt(Math.pow(l1,2)*2)/2;
+        let xl=Math.sin(angle/2)*r1;
+        let x1=x-xl;
+        let y1=y-Math.cos(angle/2)*r1;        
+        ctx.clearRect(0,0,canv.width,canv.height);  
+        ctx.save();
+        ctx.translate(x1,y1);
+        ctx.beginPath();
+        for(let i=0;i<nEdg;i++){
+            ctx.moveTo(0,0);
+            ctx.lineTo(xl*2,0);            
+            ctx.stroke();
+            ctx.fillText(i,xl*2,0);
+            ctx.translate(xl*2,0);
+            ctx.rotate(angle);
+        }
+        ctx.restore();
+        ctx2.save();
+        ctx2.clearRect(0,0,canv.width,canv.height);
+        ctx2.translate(x1,y1);
+        ctx2.beginPath();
+        for(let i=0;i<nEdg;i++){
+            ctx2.moveTo(0,0);
+            ctx2.lineTo(Math.round(xl*2)+0.5,0);
+            ctx2.stroke();
+            ctx2.fillText(i,xl*2,0);
+            ctx2.translate(Math.round(xl*2)+0.5,0);
+            ctx2.rotate(angle);}
+        ctx2.restore();
+    }    
+    
+    function fEdg(t){
+        outEdg.value=inpEdg.value;
+        let nEdg=parseInt(inpEdg.value);
+        let angle=360/nEdg*Math.PI/180;
+        let l1=inpSq.value;
+        let r1=Math.sqrt(Math.pow(l1,2)*2)/2;
+        let xl=Math.sin(angle/2)*r1;
+        let x1=x-xl;
+        let y1=y-Math.cos(angle/2)*r1;        
+        ctx.clearRect(0,0,canv.width,canv.height); 
+        ctx.save();
+        ctx.translate(x1,y1);
+        ctx.beginPath();
+        for(let i=0;i<nEdg;i++){
+            ctx.moveTo(0,0);
+            ctx.lineTo(xl*2,0);            
+            ctx.stroke();
+            ctx.fillText(i,xl*2,0);
+            ctx.translate(xl*2,0);
+            ctx.rotate(angle);
+        }
+        ctx.restore();
+        ctx2.clearRect(0,0,canv.width,canv.height);
+        ctx2.save();
+        ctx2.translate(x1,y1);        
+        ctx2.beginPath();
+        for(let i=0;i<nEdg;i++){
+            ctx2.moveTo(0,0);
+            ctx2.lineTo(Math.round(xl*2)+0.5,0);
+            ctx2.stroke();
+            ctx2.fillText(i,xl*2,0);
+            ctx2.translate(Math.round(xl*2)+0.5,0);
+            ctx2.rotate(angle);}
+        ctx2.restore();
+        
+    }    
+ </script>
+</html>
