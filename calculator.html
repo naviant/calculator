@@ -1,0 +1,162 @@
+<html>
+<head>
+    <style>
+        *{
+            margin: 15px;
+        }
+        canvas{
+            border: 2px solid black;
+        }
+        svg{
+            border: 2px solid black;
+        }
+    
+    </style>
+    
+</head>
+<body>
+    <label><input type="range" min="4" max="20" id='inputNumEdg' value="6">
+    number of edges:<output id='outputNumEdg'></output></label>
+    <br>
+    <label><input type="range" min="70" max="170" id='inputOuterSize'>
+    outer size:<output id='outputOuterSize'></output></label>
+    <br>
+    <label><input type="range" min="10" max="60" id='inputInnerSize'>
+    inner size:<output id='outputInnerSize'></output></label>
+    <br>
+    <svg width="350px" height="350px">
+
+    </svg>
+</body>
+<script>
+//    Построение правильного многоугольника: 360 делится на кол-во граней, получаем угол;
+    
+    let inputOuterSize=document.getElementById('inputOuterSize');
+    let outputOuterSize=document.getElementById('outputOuterSize');
+    let inputInnerSize=document.getElementById('inputInnerSize');
+    let outputInnerSize=document.getElementById('outputInnerSize');
+    let inputNumEdg=document.getElementById('inputNumEdg');
+    let outputNumEdg=document.getElementById('outputNumEdg');
+    inputOuterSize.addEventListener('input',f1);
+    inputInnerSize.addEventListener('input',f1);
+    inputNumEdg.addEventListener('input',fEdg);    
+    let svg=document.querySelector('svg');
+    let poly=document.createElementNS("http://www.w3.org/2000/svg", "polygon");
+    let poly2=document.createElementNS("http://www.w3.org/2000/svg", "polygon");
+    let path=document.createElementNS("http://www.w3.org/2000/svg", "path");
+    let circ=document.createElementNS("http://www.w3.org/2000/svg", "circle");
+    let circ2=document.createElementNS("http://www.w3.org/2000/svg", "circle");
+    svg.append(poly);
+    svg.append(poly2);
+    svg.append(path);
+    svg.append(circ);
+    svg.append(circ2);     
+    outputOuterSize.value=inputOuterSize.value;
+    outputNumEdg.value=inputNumEdg.value;    
+    let sw=Number(svg.getAttribute('width').slice(0,-2)); 
+    let x=sw/2;
+    let y=x;       
+    function startDraw(){
+        let nEdg=inputNumEdg.value;
+        let r=inputOuterSize.value;
+        let r2=inputInnerSize.value;
+        let angle=360/nEdg*Math.PI/180;
+        let s='';
+        let s2='';
+        let sectorPoints='';
+        for(let i=0;i<nEdg;i++){
+            let xp=x+r*Math.cos(angle+2*Math.PI*i/nEdg);
+            let yp=y+r*Math.sin(angle+2*Math.PI*i/nEdg);
+            s+=`${xp} ${yp},`;
+            let xp2=x+r2*Math.cos(angle+2*Math.PI*i/nEdg);
+            let yp2=y+r2*Math.sin(angle+2*Math.PI*i/nEdg);
+            s2+=`${xp2} ${yp2},`;
+            sectorPoints+=`M${xp} ${yp} L ${xp2} ${yp2}`;
+        }
+        s=s.slice(0,-1);
+        s2=s2.slice(0,-1);
+        poly.setAttribute('points',s);
+        poly.setAttribute('style','stroke: black; stroke-width: 1; fill:white');
+        poly.setAttribute('transform-origin','center');
+        poly.setAttribute('transform','rotate('+(360/nEdg/2+270)+')');  
+        poly2.setAttribute('points',s2);
+        poly2.setAttribute('style','stroke: black; stroke-width: 1; fill:white');
+        poly2.setAttribute('transform-origin','center');
+        poly2.setAttribute('transform','rotate('+(360/nEdg/2+270)+')');
+        path.setAttribute('d',sectorPoints);
+        path.setAttribute('stroke','black');
+        path.setAttribute('transform-origin','center');
+        path.setAttribute('transform','rotate('+(360/nEdg/2+270)+')');
+    }
+    startDraw();
+    
+    function f1(t){
+        outputOuterSize.value=inputOuterSize.value;
+        outputInnerSize.value=inputInnerSize.value;
+        let nEdg=inputNumEdg.value;
+        let r=inputOuterSize.value;
+        let r2=inputInnerSize.value;
+        let angle=360/nEdg*Math.PI/180;
+        let s='';
+        let s2='';
+        let sectorPoints='';
+        for(let i=0;i<nEdg;i++){
+            let xp=x+r*Math.cos(angle+2*Math.PI*i/nEdg);
+            let yp=y+r*Math.sin(angle+2*Math.PI*i/nEdg);
+            s+=`${xp} ${yp},`;
+            let xp2=x+r2*Math.cos(angle+2*Math.PI*i/nEdg);
+            let yp2=y+r2*Math.sin(angle+2*Math.PI*i/nEdg);
+            s2+=`${xp2} ${yp2},`;
+            sectorPoints+=`M${xp} ${yp} L ${xp2} ${yp2}`;
+        }
+        s=s.slice(0,-1);
+        s2=s2.slice(0,-1);
+        poly.setAttribute('points',s);
+        poly.setAttribute('style','stroke: black; stroke-width: 1; fill:white');
+        poly.setAttribute('transform-origin','center');
+        poly.setAttribute('transform','rotate('+(360/nEdg/2+270)+')');
+        poly2.setAttribute('points',s2);
+        poly2.setAttribute('style','stroke: black; stroke-width: 1; fill:white');
+        poly2.setAttribute('transform-origin','center');
+        poly2.setAttribute('transform','rotate('+(360/nEdg/2+270)+')');
+        path.setAttribute('d',sectorPoints);
+        path.setAttribute('stroke','black');
+        path.setAttribute('transform-origin','center');
+        path.setAttribute('transform','rotate('+(360/nEdg/2+270)+')');
+    }
+    
+    function fEdg(t){
+        outputNumEdg.value=inputNumEdg.value;
+        let nEdg=inputNumEdg.value;
+        let r=inputOuterSize.value;
+        let r2=inputInnerSize.value;
+        let angle=360/nEdg*Math.PI/180;
+        let s='';
+        let s2='';
+        let sectorPoints='';
+        for(let i=0;i<nEdg;i++){
+            let xp=x+r*Math.cos(angle+2*Math.PI*i/nEdg);
+            let yp=y+r*Math.sin(angle+2*Math.PI*i/nEdg);
+            s+=`${xp} ${yp},`;
+            let xp2=x+r2*Math.cos(angle+2*Math.PI*i/nEdg);
+            let yp2=y+r2*Math.sin(angle+2*Math.PI*i/nEdg);
+            s2+=`${xp2} ${yp2},`;
+            sectorPoints+=`M${xp} ${yp} L ${xp2} ${yp2}`;
+        }
+        s=s.slice(0,-1);
+        s2=s2.slice(0,-1);
+        poly.setAttribute('points',s);
+        poly.setAttribute('style','stroke: black; stroke-width: 1; fill:white');
+        poly.setAttribute('transform-origin','center');
+        poly.setAttribute('transform','rotate('+(360/nEdg/2+270)+')');  
+        poly2.setAttribute('points',s2);
+        poly2.setAttribute('style','stroke: black; stroke-width: 1; fill:white');
+        poly2.setAttribute('transform-origin','center');
+        poly2.setAttribute('transform','rotate('+(360/nEdg/2+270)+')'); 
+        path.setAttribute('d',sectorPoints);
+        path.setAttribute('stroke','black');
+        path.setAttribute('transform-origin','center');
+        path.setAttribute('transform','rotate('+(360/nEdg/2+270)+')');
+    }    
+ </script>
+</html>
