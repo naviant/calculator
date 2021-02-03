@@ -21,7 +21,7 @@
     <label><input type="range" min="100" max="150" id='inputOutRad'>
     Outside radius:<output id='outputOutRad'></output></label>
     <br>
-    <label><input type="range" min="10" max="50" id='inputRingWidth'>
+    <label><input type="range" min="10" max="100" id='inputRingWidth'>
     Ring width:<output id='outputRingWidth'></output></label>
     <br>
     <label><input type="range" min="0" max="100" id='inputMarginInner'>
@@ -77,12 +77,6 @@
     svg.append(circ);
     svg.append(circ2);
     //*************************************************
-    let nSeg=Number(inputSegments.value);
-    let outR=Number(inputOutRad.value);
-    let ringW=Number(inputRingWidth.value);
-    let marginInn=Number(inputMarginInner.value);
-    let marginOut=Number(inputMarginOuter.value);
-    let scale=Number(inputScale.value);
     let svgL=Number(svg.getAttribute('width').slice(0,-2)); 
     let x=svgL/2;
     let y=x;
@@ -90,14 +84,22 @@
     
     //*************************************************
     function Draw(){
+        let nSeg=Number(inputSegments.value);
+        let outR=Number(inputOutRad.value);
+        let ringW=Number(inputRingWidth.value);
+        let marginInn=Number(inputMarginInner.value);
+        let marginOut=Number(inputMarginOuter.value);
+        let scale=Number(inputScale.value);
+        
         let angle=360/nSeg*Math.PI/180;
-        let k=r/(outR/Math.cos(angle/2)+marginOut);
+        let k=(r*Math.cos(angle/2))/(outR+marginOut);
         
         let innR=outR-ringW;
         let r2=innR-marginInn;
         outR*=k;
         innR*=k;
         r2*=k;
+              
         
         let s='';
         let s2='';
@@ -143,23 +145,36 @@
     function f(num){
         if(num==1){
             outputSegments.value=inputSegments.value;
-            nSeg=Number(inputSegments.value);
             Draw();
         }else if(num==2){
             outputOutRad.value=inputOutRad.value;
-            outR=Number(inputOutRad.value);            
+            let maxMarInn=Number(inputOutRad.value)-Number(inputRingWidth.value);
+            if(Number(inputMarginInner.value)>maxMarInn){
+                inputMarginInner.value=maxMarInn;
+                outputMarginInner.value=maxMarInn;
+                inputMarginInner.setAttribute('max',String(maxMarInn));
+            }
+            else{
+                inputMarginInner.setAttribute('max',String(maxMarInn));
+            }
             Draw();
         }else if(num==3){
             outputRingWidth.value=inputRingWidth.value;
-            ringW=Number(inputRingWidth.value);
+            let maxMarInn=Number(inputOutRad.value)-Number(inputRingWidth.value);
+            if(Number(inputMarginInner.value)>maxMarInn){
+                inputMarginInner.value=maxMarInn;
+                outputMarginInner.value=maxMarInn;
+                inputMarginInner.setAttribute('max',String(maxMarInn));
+            }
+            else{
+                inputMarginInner.setAttribute('max',String(maxMarInn));
+            }
             Draw();
         }else if(num==4){
             outputMarginInner.value=inputMarginInner.value;
-            marginInn=Number(inputMarginInner.value);
             Draw();
         }else if(num==5){
             outputMarginOuter.value=inputMarginOuter.value;
-            marginOut=Number(inputMarginOuter.value);
             Draw();
         }else{
             outputScale.value=inputScale.value;
