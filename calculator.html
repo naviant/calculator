@@ -15,31 +15,56 @@
     
 </head>
 <body>
-    <label><input type="range" min="4" max="20" id='inputNumEdg' value="6">
-    number of edges:<output id='outputNumEdg'></output></label>
+    <label><input type="range" min="4" max="20" id='inputSegments' value="6">
+    Segments:<output id='outputSegments'></output></label>
     <br>
-    <label><input type="range" min="70" max="170" id='inputOuterSize'>
-    outer size:<output id='outputOuterSize'></output></label>
+    <label><input type="range" min="100" max="150" id='inputOutRad'>
+    Outside radius:<output id='outputOutRad'></output></label>
     <br>
-    <label><input type="range" min="10" max="60" id='inputInnerSize'>
-    inner size:<output id='outputInnerSize'></output></label>
+    <label><input type="range" min="10" max="50" id='inputRingWidth'>
+    Ring width:<output id='outputRingWidth'></output></label>
+    <br>
+    <label><input type="range" min="0" max="100" id='inputMarginInner'>
+    Margin inner:<output id='outputMarginInner'></output></label>
+    <br>
+    <label><input type="range" min="0" max="100" id='inputMarginOuter'>
+    Margin outer:<output id='outputMarginOuter'></output></label>
+    <br>
+    <label><input type="range" min="50" max="300" id='inputScale'>
+    Scale:<output id='outputScale'></output></label>
     <br>
     <svg width="350px" height="350px">
-
+        
     </svg>
 </body>
 <script>
 //    Построение правильного многоугольника: 360 делится на кол-во граней, получаем угол;
-    
-    let inputOuterSize=document.getElementById('inputOuterSize');
-    let outputOuterSize=document.getElementById('outputOuterSize');
-    let inputInnerSize=document.getElementById('inputInnerSize');
-    let outputInnerSize=document.getElementById('outputInnerSize');
-    let inputNumEdg=document.getElementById('inputNumEdg');
-    let outputNumEdg=document.getElementById('outputNumEdg');
-    inputOuterSize.addEventListener('input',f1);
-    inputInnerSize.addEventListener('input',f1);
-    inputNumEdg.addEventListener('input',fEdg);    
+    let inputSegments=document.getElementById('inputSegments');
+    let outputSegments=document.getElementById('outputSegments');
+    let inputOutRad=document.getElementById('inputOutRad');
+    let outputOutRad=document.getElementById('outputOutRad');
+    let inputRingWidth=document.getElementById('inputRingWidth');
+    let outputRingWidth=document.getElementById('outputRingWidth');
+    let inputMarginInner=document.getElementById('inputMarginInner');
+    let otputMarginInner=document.getElementById('outputMarginInner');
+    let inputMarginOuter=document.getElementById('inputMarginOuter');
+    let outputMarginOuter=document.getElementById('outputMarginOuter');
+    let inputScale=document.getElementById('inputScale');
+    let outputScale=document.getElementById('outputScale');
+    outputSegments.value=inputSegments.value;
+    outputOutRad.value=inputOutRad.value;
+    outputRingWidth.value=inputRingWidth.value;
+    outputMarginInner.value=inputMarginInner.value;
+    outputMarginOuter.value=inputMarginOuter.value;
+    outputScale.value=inputScale.value;
+    //*************************************************
+    inputSegments.addEventListener('input',()=>f(1));
+    inputOutRad.addEventListener('input',()=>f(2))
+    inputRingWidth.addEventListener('input',()=>f(3));
+    inputMarginInner.addEventListener('input',()=>f(4));
+    inputMarginOuter.addEventListener('input',()=>f(5));
+    inputScale.addEventListener('input',()=>f(6));
+    //*************************************************
     let svg=document.querySelector('svg');
     let poly=document.createElementNS("http://www.w3.org/2000/svg", "polygon");
     let poly2=document.createElementNS("http://www.w3.org/2000/svg", "polygon");
@@ -50,113 +75,97 @@
     svg.append(poly2);
     svg.append(path);
     svg.append(circ);
-    svg.append(circ2);     
-    outputOuterSize.value=inputOuterSize.value;
-    outputNumEdg.value=inputNumEdg.value;    
-    let sw=Number(svg.getAttribute('width').slice(0,-2)); 
-    let x=sw/2;
-    let y=x;       
-    function startDraw(){
-        let nEdg=inputNumEdg.value;
-        let r=inputOuterSize.value;
-        let r2=inputInnerSize.value;
-        let angle=360/nEdg*Math.PI/180;
-        let s='';
-        let s2='';
-        let sectorPoints='';
-        for(let i=0;i<nEdg;i++){
-            let xp=x+r*Math.cos(angle+2*Math.PI*i/nEdg);
-            let yp=y+r*Math.sin(angle+2*Math.PI*i/nEdg);
-            s+=`${xp} ${yp},`;
-            let xp2=x+r2*Math.cos(angle+2*Math.PI*i/nEdg);
-            let yp2=y+r2*Math.sin(angle+2*Math.PI*i/nEdg);
-            s2+=`${xp2} ${yp2},`;
-            sectorPoints+=`M${xp} ${yp} L ${xp2} ${yp2}`;
-        }
-        s=s.slice(0,-1);
-        s2=s2.slice(0,-1);
-        poly.setAttribute('points',s);
-        poly.setAttribute('style','stroke: black; stroke-width: 1; fill:white');
-        poly.setAttribute('transform-origin','center');
-        poly.setAttribute('transform','rotate('+(360/nEdg/2+270)+')');  
-        poly2.setAttribute('points',s2);
-        poly2.setAttribute('style','stroke: black; stroke-width: 1; fill:white');
-        poly2.setAttribute('transform-origin','center');
-        poly2.setAttribute('transform','rotate('+(360/nEdg/2+270)+')');
-        path.setAttribute('d',sectorPoints);
-        path.setAttribute('stroke','black');
-        path.setAttribute('transform-origin','center');
-        path.setAttribute('transform','rotate('+(360/nEdg/2+270)+')');
-    }
-    startDraw();
+    svg.append(circ2);
+    //*************************************************
+    let nSeg=Number(inputSegments.value);
+    let outR=Number(inputOutRad.value);
+    let ringW=Number(inputRingWidth.value);
+    let marginInn=Number(inputMarginInner.value);
+    let marginOut=Number(inputMarginOuter.value);
+    let scale=Number(inputScale.value);
+    let svgL=Number(svg.getAttribute('width').slice(0,-2)); 
+    let x=svgL/2;
+    let y=x;
+    let r=x-5;
     
-    function f1(t){
-        outputOuterSize.value=inputOuterSize.value;
-        outputInnerSize.value=inputInnerSize.value;
-        let nEdg=inputNumEdg.value;
-        let r=inputOuterSize.value;
-        let r2=inputInnerSize.value;
-        let angle=360/nEdg*Math.PI/180;
+    //*************************************************
+    function Draw(){
+        let angle=360/nSeg*Math.PI/180;
+        let k=r/(outR/Math.cos(angle/2)+marginOut);
+        
+        let innR=outR-ringW;
+        let r2=innR-marginInn;
+        outR*=k;
+        innR*=k;
+        r2*=k;
+        
         let s='';
         let s2='';
         let sectorPoints='';
-        for(let i=0;i<nEdg;i++){
-            let xp=x+r*Math.cos(angle+2*Math.PI*i/nEdg);
-            let yp=y+r*Math.sin(angle+2*Math.PI*i/nEdg);
+        for(let i=0;i<nSeg;i++){
+            let xp=x+r*Math.cos(angle+2*Math.PI*i/nSeg);
+            let yp=y+r*Math.sin(angle+2*Math.PI*i/nSeg);
             s+=`${xp} ${yp},`;
-            let xp2=x+r2*Math.cos(angle+2*Math.PI*i/nEdg);
-            let yp2=y+r2*Math.sin(angle+2*Math.PI*i/nEdg);
+            let xp2=x+r2*Math.cos(angle+2*Math.PI*i/nSeg);
+            let yp2=y+r2*Math.sin(angle+2*Math.PI*i/nSeg);
             s2+=`${xp2} ${yp2},`;
             sectorPoints+=`M${xp} ${yp} L ${xp2} ${yp2}`;
         }
+        circ.setAttribute('cx',String(x));
+        circ.setAttribute('cy',String(y));
+        circ.setAttribute('r',String(outR));
+        circ.setAttribute('stroke','black');
+        circ.setAttribute('fill','transparent');
+        circ.setAttribute('stroke-width','1');
+        circ2.setAttribute('cx',String(x));
+        circ2.setAttribute('cy',String(y));
+        circ2.setAttribute('r',String(innR));
+        circ2.setAttribute('stroke','black');
+        circ2.setAttribute('fill','transparent');
+        circ2.setAttribute('stroke-width','1');
         s=s.slice(0,-1);
         s2=s2.slice(0,-1);
         poly.setAttribute('points',s);
         poly.setAttribute('style','stroke: black; stroke-width: 1; fill:white');
         poly.setAttribute('transform-origin','center');
-        poly.setAttribute('transform','rotate('+(360/nEdg/2+270)+')');
+        poly.setAttribute('transform','rotate('+(360/nSeg/2+270)+')');  
         poly2.setAttribute('points',s2);
         poly2.setAttribute('style','stroke: black; stroke-width: 1; fill:white');
         poly2.setAttribute('transform-origin','center');
-        poly2.setAttribute('transform','rotate('+(360/nEdg/2+270)+')');
+        poly2.setAttribute('transform','rotate('+(360/nSeg/2+270)+')');
         path.setAttribute('d',sectorPoints);
         path.setAttribute('stroke','black');
         path.setAttribute('transform-origin','center');
-        path.setAttribute('transform','rotate('+(360/nEdg/2+270)+')');
+        path.setAttribute('transform','rotate('+(360/nSeg/2+270)+')');
     }
-    
-    function fEdg(t){
-        outputNumEdg.value=inputNumEdg.value;
-        let nEdg=inputNumEdg.value;
-        let r=inputOuterSize.value;
-        let r2=inputInnerSize.value;
-        let angle=360/nEdg*Math.PI/180;
-        let s='';
-        let s2='';
-        let sectorPoints='';
-        for(let i=0;i<nEdg;i++){
-            let xp=x+r*Math.cos(angle+2*Math.PI*i/nEdg);
-            let yp=y+r*Math.sin(angle+2*Math.PI*i/nEdg);
-            s+=`${xp} ${yp},`;
-            let xp2=x+r2*Math.cos(angle+2*Math.PI*i/nEdg);
-            let yp2=y+r2*Math.sin(angle+2*Math.PI*i/nEdg);
-            s2+=`${xp2} ${yp2},`;
-            sectorPoints+=`M${xp} ${yp} L ${xp2} ${yp2}`;
+    Draw();
+    //*************************************************
+    function f(num){
+        if(num==1){
+            outputSegments.value=inputSegments.value;
+            nSeg=Number(inputSegments.value);
+            Draw();
+        }else if(num==2){
+            outputOutRad.value=inputOutRad.value;
+            outR=Number(inputOutRad.value);            
+            Draw();
+        }else if(num==3){
+            outputRingWidth.value=inputRingWidth.value;
+            ringW=Number(inputRingWidth.value);
+            Draw();
+        }else if(num==4){
+            outputMarginInner.value=inputMarginInner.value;
+            marginInn=Number(inputMarginInner.value);
+            Draw();
+        }else if(num==5){
+            outputMarginOuter.value=inputMarginOuter.value;
+            marginOut=Number(inputMarginOuter.value);
+            Draw();
+        }else{
+            outputScale.value=inputScale.value;
+            scale=Number(inputScale.value);
+            //меняется размер окна svg;
         }
-        s=s.slice(0,-1);
-        s2=s2.slice(0,-1);
-        poly.setAttribute('points',s);
-        poly.setAttribute('style','stroke: black; stroke-width: 1; fill:white');
-        poly.setAttribute('transform-origin','center');
-        poly.setAttribute('transform','rotate('+(360/nEdg/2+270)+')');  
-        poly2.setAttribute('points',s2);
-        poly2.setAttribute('style','stroke: black; stroke-width: 1; fill:white');
-        poly2.setAttribute('transform-origin','center');
-        poly2.setAttribute('transform','rotate('+(360/nEdg/2+270)+')'); 
-        path.setAttribute('d',sectorPoints);
-        path.setAttribute('stroke','black');
-        path.setAttribute('transform-origin','center');
-        path.setAttribute('transform','rotate('+(360/nEdg/2+270)+')');
-    }    
+    }
  </script>
 </html>
