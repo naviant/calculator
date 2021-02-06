@@ -4,13 +4,78 @@
         *{
             margin: 15px;
         }
-        canvas{
-            border: 2px solid black;
-        }
         svg{
-            border: 2px solid black;
+            border: 1px solid black;
         }
-    
+        input[type=range] {
+            -webkit-appearance: none; /* Hides the slider so that custom slider can be made */
+            background: white ;
+            border: 1px solid black;
+            border-radius: 3px;
+            height: 6px;   
+        }
+        #inputOutRad[type=range]{
+            background: red; 
+            border: 1px solid red;            
+        }
+        #inputRingWidth[type=range]{
+            background: #009933; 
+            border: 1px solid #009933;            
+        }
+        #inputMarginInner[type=range]{
+            background: #0099ff; 
+            border: 1px solid #0099ff;            
+        }
+        #inputMarginOuter[type=range]{
+            background: #cc6600; 
+            border: 1px solid #cc6600;            
+        }
+        
+
+        input[type=range]:focus {
+            outline: none; /*Removes the blue border. You should probably do some kind of focus styling for accessibility reasons though. */
+        }
+input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  border: 1px solid #000000;
+  height: 15px;
+  width: 15px;
+  border-radius: 50%;
+  background: #ffffff;
+}
+        input[type=range]:hover::-webkit-slider-thumb {
+  background:#e6e6e6;
+}
+
+/* All the same stuff for Firefox */
+input[type=range]::-moz-range-thumb {
+  border: 1px solid #000000;
+  height: 15px;
+  width: 15px;
+  border-radius: 50%;
+  background: #ffffff;
+}
+        input[type=range]:hover::-moz-range-thumb {
+  background:#e6e6e6;
+}
+
+/* All the same stuff for IE */
+input[type=range]::-ms-thumb {
+  border: 1px solid #000000;
+  height: 15px;
+  width: 15px;
+  border-radius: 50%;
+  background: #ffffff;
+}
+        input[type=range]:hover::-ms-thumb {
+            background:#e6e6e6;}
+input[type=range]::-ms-thumb {
+  border: 1px solid #000000;
+  height: 15px;
+  width: 15px;
+  border-radius: 50%;
+  background: #ffffff;
+}
     </style>
     
 </head>
@@ -18,13 +83,13 @@
     <label><input type="range" min="4" max="20" id='inputSegments' value="6">
     Segments:<output id='outputSegments'></output></label>
     <br>
-    <label><input type="range" min="100" max="150" id='inputOutRad'>
+    <label><input type="range" min="100" max="150" id='inputOutRad' background-color='white'>
     Outside radius:<output id='outputOutRad'></output></label>
     <br>
     <label><input type="range" min="10" max="100" id='inputRingWidth'>
     Ring width:<output id='outputRingWidth'></output></label>
     <br>
-    <label><input type="range" min="0" max="100" id='inputMarginInner'>
+    <label><input type="range" min="0" max="70" id='inputMarginInner'>
     Margin inner:<output id='outputMarginInner'></output></label>
     <br>
     <label><input type="range" min="0" max="100" id='inputMarginOuter'>
@@ -59,7 +124,7 @@
     outputScale.value=inputScale.value;
     //*************************************************
     inputSegments.addEventListener('input',()=>f(1));
-    inputOutRad.addEventListener('input',()=>f(2))
+    inputOutRad.addEventListener('input',()=>f(2));
     inputRingWidth.addEventListener('input',()=>f(3));
     inputMarginInner.addEventListener('input',()=>f(4));
     inputMarginOuter.addEventListener('input',()=>f(5));
@@ -71,36 +136,83 @@
     let path=document.createElementNS("http://www.w3.org/2000/svg", "path");
     let circ=document.createElementNS("http://www.w3.org/2000/svg", "circle");
     let circ2=document.createElementNS("http://www.w3.org/2000/svg", "circle");
+    let sizeLine1=document.createElementNS("http://www.w3.org/2000/svg", "path");
+    let sizeLine2=document.createElementNS("http://www.w3.org/2000/svg", "path");
+    let sizeLine3=document.createElementNS("http://www.w3.org/2000/svg", "path");
+    let sizeLine4=document.createElementNS("http://www.w3.org/2000/svg", "path"); 
+    let point0=document.createElementNS("http://www.w3.org/2000/svg", "circle"); 
+    let point1=document.createElementNS("http://www.w3.org/2000/svg", "circle"); 
+    let point2=document.createElementNS("http://www.w3.org/2000/svg", "circle"); 
+    let point3=document.createElementNS("http://www.w3.org/2000/svg", "circle"); 
+    let point4=document.createElementNS("http://www.w3.org/2000/svg", "circle");
+    let point5=document.createElementNS("http://www.w3.org/2000/svg", "circle");   
+    let point6=document.createElementNS("http://www.w3.org/2000/svg", "circle"); 
+    let point7=document.createElementNS("http://www.w3.org/2000/svg", "circle"); 
     svg.append(poly);
     svg.append(poly2);
     svg.append(path);
     svg.append(circ);
     svg.append(circ2);
+    svg.append(sizeLine1);
+    svg.append(sizeLine2);
+    svg.append(sizeLine3);
+    svg.append(sizeLine4);
+    svg.append(point1);
+    svg.append(point2);
+    svg.append(point3);
+    svg.append(point4);
+    svg.append(point5);
+    svg.append(point0);  
+    svg.append(point6);  
+    svg.append(point7);  
     //*************************************************
     let svgL=Number(svg.getAttribute('width').slice(0,-2)); 
     let x=svgL/2;
     let y=x;
     let r=x-5;
-    
     //*************************************************
+    function size(sizeLineEl,point,point2,value,x1,y1,x2,y2,angle){        
+        x1=String(x1);
+        y1=String(y1);
+        x2=String(x2);
+        y2=String(y2);        
+        sizeLineEl.setAttribute('d',('M'+x1+' '+y1+' L'+x2+
+' '+y2));
+        sizeLineEl.setAttribute('stroke',value);
+        sizeLineEl.setAttribute('stroke-width','4');
+        sizeLineEl.setAttribute('transform-origin','center');
+        sizeLineEl.setAttribute('transform','rotate('+angle+')');
+        if(point!=0){
+        point.setAttribute('cx',x1);
+        point.setAttribute('cy',y1);
+        point.setAttribute('r','4');
+        point.setAttribute('fill',value);
+        point.setAttribute('stroke','white');
+        point.setAttribute('transform-origin','center');
+        point.setAttribute('transform','rotate('+angle+')');}
+        if(point2!=0){
+        point2.setAttribute('cx',x2);
+        point2.setAttribute('cy',y2);
+        point2.setAttribute('r','4');
+        point2.setAttribute('fill',value);
+        point2.setAttribute('stroke','white');
+        point2.setAttribute('transform-origin','center');
+        point2.setAttribute('transform','rotate('+angle+')');}
+    }
     function Draw(){
         let nSeg=Number(inputSegments.value);
         let outR=Number(inputOutRad.value);
         let ringW=Number(inputRingWidth.value);
         let marginInn=Number(inputMarginInner.value);
         let marginOut=Number(inputMarginOuter.value);
-        let scale=Number(inputScale.value);
-        
+        let scale=Number(inputScale.value);        
         let angle=360/nSeg*Math.PI/180;
-        let k=(r*Math.cos(angle/2))/(outR+marginOut);
-        
+        let k=(r*Math.cos(angle/2))/(outR+marginOut);        
         let innR=outR-ringW;
         let r2=innR-marginInn;
         outR*=k;
         innR*=k;
-        r2*=k;
-              
-        
+        r2*=k;        
         let s='';
         let s2='';
         let sectorPoints='';
@@ -128,17 +240,22 @@
         s=s.slice(0,-1);
         s2=s2.slice(0,-1);
         poly.setAttribute('points',s);
-        poly.setAttribute('style','stroke: black; stroke-width: 1; fill:white');
+        poly.setAttribute('style','stroke: black; stroke-width: 1; fill:transparent');
         poly.setAttribute('transform-origin','center');
-        poly.setAttribute('transform','rotate('+(360/nSeg/2+270)+')');  
+        poly.setAttribute('transform','rotate('+(360/nSeg/2+270)+')'); 
         poly2.setAttribute('points',s2);
-        poly2.setAttribute('style','stroke: black; stroke-width: 1; fill:white');
+        poly2.setAttribute('style','stroke: black; stroke-width: 1; fill:transparent');
         poly2.setAttribute('transform-origin','center');
         poly2.setAttribute('transform','rotate('+(360/nSeg/2+270)+')');
         path.setAttribute('d',sectorPoints);
         path.setAttribute('stroke','black');
         path.setAttribute('transform-origin','center');
         path.setAttribute('transform','rotate('+(360/nSeg/2+270)+')');
+        size(sizeLine1,point0,point1,'#ff3300',x,y,x+outR,y,-150);//центр-внешний радиус
+        size(sizeLine2,point2,point3,'#009933',x-outR,y,x-outR+ringW*k,y,10);
+        size(sizeLine3,point4,point5,'#0099ff',x-outR+ringW*k,y,x-outR+ringW*k+marginInn*k,y,90+360/nSeg/2);
+        size(sizeLine4,point6,point7,'#cc6600',x,y-outR,x,y-outR-marginOut*k,360/nSeg);
+        
     }
     Draw();
     //*************************************************
