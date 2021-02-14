@@ -1,0 +1,514 @@
+<html>
+<head>
+    <style>
+        *{
+            margin: 15px;
+        }
+        svg{
+/*            border: 1px solid black;*/
+            margin: 5px;
+        }
+        
+        input[type=range] {
+            -webkit-appearance: none; /* Hides the slider so that custom slider can be made */
+            background: white ;
+            border: 1px solid black;
+            border-radius: 3px;
+            height: 6px;
+        }
+        #inputOutRad[type=range]{
+            background: red; 
+            border: 1px solid red;            
+        }
+        #inputRingWidth[type=range]{
+            background: #009933; 
+            border: 1px solid #009933;            
+        }
+        #inputMarginInner[type=range]{
+            background: #0099ff; 
+            border: 1px solid #0099ff;            
+        }
+        #inputMarginOuter[type=range]{
+            background: #cc6600; 
+            border: 1px solid #cc6600;            
+        }
+        
+
+        input[type=range]:focus {
+            outline: none; /*Removes the blue border. You should probably do some kind of focus styling for accessibility reasons though. */
+        }
+input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  border: 1px solid #000000;
+  height: 15px;
+  width: 15px;
+  border-radius: 50%;
+  background: #ffffff;
+}
+        input[type=range]:hover::-webkit-slider-thumb {
+  background:#e6e6e6;
+}
+
+/* All the same stuff for Firefox */
+input[type=range]::-moz-range-thumb {
+  border: 1px solid #000000;
+  height: 15px;
+  width: 15px;
+  border-radius: 50%;
+  background: #ffffff;
+}
+        input[type=range]:hover::-moz-range-thumb {
+  background:#e6e6e6;
+}
+
+/* All the same stuff for IE */
+input[type=range]::-ms-thumb {
+  border: 1px solid #000000;
+  height: 15px;
+  width: 15px;
+  border-radius: 50%;
+  background: #ffffff;
+}
+        input[type=range]:hover::-ms-thumb {
+            background:#e6e6e6;}
+input[type=range]::-ms-thumb {
+  border: 1px solid #000000;
+  height: 15px;
+  width: 15px;
+  border-radius: 50%;
+  background: #ffffff;
+}
+    </style>
+    
+</head>
+<body>
+    <label><input type="range" min="4" max="20" id='inputSegments' value="6">
+        Segments:<output id='outputSegments'></output></label>
+    <br>
+    <label><input type="range" min="100" max="150" id='inputOutRad' background-color='white'>
+        Outside radius:<output id='outputOutRad'></output></label>
+    <br>
+    <label><input type="range" min="10" max="100" id='inputRingWidth'>
+    Ring width:<output id='outputRingWidth'></output></label>
+    <br>
+    <label><input type="range" min="0" max="70" value='14' id='inputMarginInner'>
+    Margin inner:<output id='outputMarginInner'></output></label>
+    <br>
+    <label><input type="range" min="0" max="100" value='16' id='inputMarginOuter'>
+    Margin outer:<output id='outputMarginOuter'></output></label>
+    <br>
+    <label><input type="range" min="50" max="300" id='inputScale'>
+    Scale:<output id='outputScale'></output></label>
+    <br>
+    <svg width="350px" height="350px">
+        <defs>
+    <pattern id="img1" width="1" height="1" >
+        <image xlink:href="texture3.jpg"
+            width="250" height="250" id='img' />
+    </pattern>
+        </defs>
+        <g id='group'>
+        </g>
+    </svg>
+    <svg width="300px" height="350px" id='svg2'>
+        
+    </svg>
+</body>
+<script>
+//    Построение правильного многоугольника: 360 делится на кол-во граней, получаем угол;
+    let inputSegments=document.getElementById('inputSegments');
+    let outputSegments=document.getElementById('outputSegments');
+    let inputOutRad=document.getElementById('inputOutRad');
+    let outputOutRad=document.getElementById('outputOutRad');
+    let inputRingWidth=document.getElementById('inputRingWidth');
+    let outputRingWidth=document.getElementById('outputRingWidth');
+    let inputMarginInner=document.getElementById('inputMarginInner');
+    let otputMarginInner=document.getElementById('outputMarginInner');
+    let inputMarginOuter=document.getElementById('inputMarginOuter');
+    let outputMarginOuter=document.getElementById('outputMarginOuter');
+    let inputScale=document.getElementById('inputScale');
+    let outputScale=document.getElementById('outputScale');
+    let group=document.getElementById('group');
+    outputSegments.value=inputSegments.value;
+    outputOutRad.value=inputOutRad.value;
+    outputRingWidth.value=inputRingWidth.value;
+    outputMarginInner.value=inputMarginInner.value;
+    outputMarginOuter.value=inputMarginOuter.value;
+    outputScale.value=inputScale.value;
+    //*************************************************
+    inputSegments.addEventListener('input',()=>f(1));
+    inputOutRad.addEventListener('input',()=>f(2));
+    inputRingWidth.addEventListener('input',()=>f(3));
+    inputMarginInner.addEventListener('input',()=>f(4));
+    inputMarginOuter.addEventListener('input',()=>f(5));
+    inputScale.addEventListener('input',()=>f(6));
+    //*************************************************
+    let svg=document.querySelector('svg');
+    let svg2=document.getElementById('svg2');    
+    let poly=document.createElementNS("http://www.w3.org/2000/svg", "polygon");
+    let poly2=document.createElementNS("http://www.w3.org/2000/svg", "polygon");
+    let path=document.createElementNS("http://www.w3.org/2000/svg", "path");
+    let circ=document.createElementNS("http://www.w3.org/2000/svg", "circle");
+    let circ2=document.createElementNS("http://www.w3.org/2000/svg", "circle");
+    let circ3=document.createElementNS("http://www.w3.org/2000/svg", "circle");
+    let sizeLine1=document.createElementNS("http://www.w3.org/2000/svg", "path");
+    let sizeLine2=document.createElementNS("http://www.w3.org/2000/svg", "path");
+    let sizeLine3=document.createElementNS("http://www.w3.org/2000/svg", "path");
+    let sizeLine4=document.createElementNS("http://www.w3.org/2000/svg", "path"); 
+    let point0=document.createElementNS("http://www.w3.org/2000/svg", "circle"); 
+    let point1=document.createElementNS("http://www.w3.org/2000/svg", "circle"); 
+    let point2=document.createElementNS("http://www.w3.org/2000/svg", "circle"); 
+    let point3=document.createElementNS("http://www.w3.org/2000/svg", "circle"); 
+    let point4=document.createElementNS("http://www.w3.org/2000/svg", "circle");
+    let point5=document.createElementNS("http://www.w3.org/2000/svg", "circle");   
+    let point6=document.createElementNS("http://www.w3.org/2000/svg", "circle"); 
+    let point7=document.createElementNS("http://www.w3.org/2000/svg", "circle"); 
+    let fillPoly=document.createElementNS("http://www.w3.org/2000/svg", "polygon");
+    let seg=document.createElementNS("http://www.w3.org/2000/svg", "polygon"); 
+    let svg2arc=document.createElementNS("http://www.w3.org/2000/svg", "path");
+    let svg2arc2=document.createElementNS("http://www.w3.org/2000/svg", "path");
+    let offline=document.createElementNS("http://www.w3.org/2000/svg", "path");
+    let sizeText1=document.createElementNS("http://www.w3.org/2000/svg", "text");
+    let sizeText2=document.createElementNS("http://www.w3.org/2000/svg", "text");
+    let sizeText3=document.createElementNS("http://www.w3.org/2000/svg", "text");
+    let sizeText4=document.createElementNS("http://www.w3.org/2000/svg", "text");
+    let sizeText5=document.createElementNS("http://www.w3.org/2000/svg", "text");
+    let svg2sizeLine1=document.createElementNS("http://www.w3.org/2000/svg", "path");
+    let svg2sizeLine2=document.createElementNS("http://www.w3.org/2000/svg", "path");
+    let svg2sizeLine3=document.createElementNS("http://www.w3.org/2000/svg", "path");
+    let svg2sizeLine4=document.createElementNS("http://www.w3.org/2000/svg", "path");
+    let svg2sizeLine5=document.createElementNS("http://www.w3.org/2000/svg", "path");
+    
+    fillPoly.setAttribute('id','fillPoly');
+    svg.append(fillPoly);
+    svg.append(poly);
+    svg.append(poly2);
+    svg.append(path);
+    svg.append(circ);
+    svg.append(circ2);
+    svg.append(circ3);
+    svg.append(sizeLine1);
+    svg.append(sizeLine2);
+    svg.append(sizeLine3);
+    svg.append(sizeLine4);
+    svg.append(point1);
+    svg.append(point2);
+    svg.append(point3);
+    svg.append(point4);
+    svg.append(point5);
+    svg.append(point0);  
+    svg.append(point6);  
+    svg.append(point7);    
+    svg2.append(seg);
+    svg2.append(svg2arc);
+    svg2.append(svg2arc2);
+    svg2.append(offline);
+    svg2.append(sizeText1);
+    svg2.append(sizeText2);
+    svg2.append(sizeText3);
+    svg2.append(sizeText4);
+    svg2.append(sizeText5);
+    svg2.append(svg2sizeLine1);
+    svg2.append(svg2sizeLine2);
+    svg2.append(svg2sizeLine3);
+    svg2.append(svg2sizeLine4);
+    svg2.append(svg2sizeLine5);
+    //*************************************************
+    let svgL=Number(svg.getAttribute('width').slice(0,-2)); 
+    let x=svgL/2;
+    let y=x;
+    let r=x-5;
+    let maxLen=Number(inputOutRad.getAttribute('max'))+Number(inputMarginOuter.getAttribute('max'));
+    
+    //*************************************************
+    function size(sizeLineEl,point,point2,value,x1,y1,x2,y2,angle){ 
+//      залить линию градиентом белый-цвет_фона-белый
+        x1=String(x1);
+        y1=String(y1);
+        x2=String(x2);
+        y2=String(y2);        
+        sizeLineEl.setAttribute('d',('M'+x1+' '+y1+' L'+x2+
+' '+y2));
+        sizeLineEl.setAttribute('stroke',value);
+        sizeLineEl.setAttribute('stroke-width','4');
+        sizeLineEl.setAttribute('transform-origin','center');
+        sizeLineEl.setAttribute('transform','rotate('+angle+')');
+        if(point!=0){
+        point.setAttribute('cx',x1);
+        point.setAttribute('cy',y1);
+        point.setAttribute('r','4');
+        point.setAttribute('fill',value);
+        point.setAttribute('stroke','white');
+        point.setAttribute('transform-origin','center');
+        point.setAttribute('transform','rotate('+angle+')');}
+        if(point2!=0){
+        point2.setAttribute('cx',x2);
+        point2.setAttribute('cy',y2);
+        point2.setAttribute('r','4');
+        point2.setAttribute('fill',value);
+        point2.setAttribute('stroke','white');
+        point2.setAttribute('transform-origin','center');
+        point2.setAttribute('transform','rotate('+angle+')');}
+    }
+    function size2(sizeLineEl,textEl,value,x1,y1,x2,y2,k){     //   sizeLineEl,textEl - svg эл-ты path и text;
+        if(value==0){
+            textEl.textContent='';
+            sizeLineEl.setAttribute('d','');
+            return;
+        }
+        let angle=Math.atan((y2-y1)/(x2-x1));
+        let angle1=angle+10*Math.PI/180;
+        let angle2=angle-10*Math.PI/180;
+        if(value==-1){
+            value=x2-x1;
+        }
+        if(value==-2){
+            value=y2-y1;
+        }
+        if (value<20){
+            let nx=x1;
+            let ny=y1;
+            x1=x2;x2=nx;y1=y2;y2=ny;
+        }
+        value/=k;
+        let x3=8*Math.cos(angle1)+x1;
+        let y3=8*Math.sin(angle1)+y1;
+        let x4=8*Math.cos(angle2)+x1;
+        let y4=8*Math.sin(angle2)+y1;
+        let x5=x2-8*Math.cos(angle1);
+        let y5=y2-8*Math.sin(angle1);
+        let x6=x2-8*Math.cos(angle2);
+        let y6=y2-8*Math.sin(angle2);        
+        value=Math.round(value*10)/10;
+        textEl.textContent=value;
+        textEl.setAttribute('text-anchor','middle');
+        textEl.setAttribute('x',String((x1+x2)/2));
+        textEl.setAttribute('y',String((y1+y2)/2)-3);
+        if(Math.round(angle*100)==157){
+            textEl.setAttribute('y',String((y1+y2)/2+3));
+        }
+        textEl.setAttribute('transform-origin',String((x1+x2)/2+5)+'px '+String((y1+y2)/2+3)+'px');
+        textEl.setAttribute('transform','rotate('+String(angle/Math.PI*180)+')');
+        textEl.setAttribute('font-size','14');
+        sizeLineEl.setAttribute('d',('M'+x1+' '+y1+' L'+x3+' '+y3+' L'+x4+' '+y4+' Z L'+x2+' '+y2+'M'+x2+' '+y2+' L'+x5+' '+y5+' L'+x6+' '+y6+'Z'));
+        sizeLineEl.setAttribute('stroke','black');
+    }
+    function myArc(xc,yc,r,angle){
+//возвращает строку для отрисовки дуги в svg path;
+            
+            let xstart=xc+Math.sin(angle/2)*r;
+            let ystart=yc+Math.cos(angle/2)*r;
+            let xend=xc-Math.sin(angle/2)*r;
+            let yend=ystart;
+            return ('M'+xstart+' '+ystart+' A '+r+' '+r+' 0 0 1 '+xend+' '+yend+' ');
+        }
+    function Draw(){
+        group.innerHTML='';
+        let nSeg=Number(inputSegments.value);
+        let outR=Number(inputOutRad.value);
+        let ringW=Number(inputRingWidth.value);
+        let marginInn=Number(inputMarginInner.value);
+        let marginOut=Number(inputMarginOuter.value);
+        let scale=Number(inputScale.value);        
+        let angle=360/nSeg*Math.PI/180;
+        let k=(r*Math.cos(angle/2))/(outR+marginOut);
+        
+        let innR=outR-ringW;
+        let r2=innR-marginInn;
+//*************************svg2*******************
+        let a=(outR+marginOut)/(Math.cos(angle/2))-outR+marginInn+ringW;
+        let b=Math.tan(angle/2)*(outR+marginOut)*2;
+        let l=Math.sin(angle/2)*a;
+        let c=b-2*l;
+        let h=Math.cos(angle/2)*a;
+        
+        a*=k;
+        b*=k;
+        c*=k;
+        l*=k;
+        h*=k;
+//************************************************
+        outR*=k;
+        innR*=k;
+        marginOut*=k;
+        ringW*=k;
+        marginInn*=k;
+        let imgsize=410*(k+0.1);
+            let kof=Math.round(imgsize/250*10)/10;            
+        
+       console.log(k);
+        console.log(imgsize);
+       document.getElementById('img').setAttribute('width',String(imgsize));
+        document.getElementById('img').setAttribute('height',String(imgsize));
+        let cs=[x-b/2,y-outR-marginOut,x+b/2,y-outR-marginOut,x+c/2,y-outR-marginOut+h,x-c/2,y-outR-marginOut+h];
+        let coors='';
+        for(let i=0;i<4;i++){
+            coors+=cs[i*2];
+            coors+=' ';
+            coors+=cs[i*2+1];
+            coors+=',';
+        }
+        coors=coors.slice(0,-1);
+        fillPoly.setAttribute('points',coors);
+        fillPoly.setAttribute('fill','url(#img1)');
+        for(let i=1;i<nSeg;i++){
+            let use=document.createElementNS("http://www.w3.org/2000/svg", "use");
+            use.setAttribute('href','#fillPoly');
+            use.setAttribute('transform-origin','center');
+            use.setAttribute('transform','rotate('+(360/nSeg*i)+')');
+            group.append(use);
+        }
+        
+        r2*=k;        
+        let s='';
+        let s2='';
+        let sectorPoints='';
+        for(let i=0;i<nSeg;i++){
+            let xp=x+r*Math.cos(angle+2*Math.PI*i/nSeg);
+            let yp=y+r*Math.sin(angle+2*Math.PI*i/nSeg);
+            s+=`${xp} ${yp},`;
+            let xp2=x+r2*Math.cos(angle+2*Math.PI*i/nSeg);
+            let yp2=y+r2*Math.sin(angle+2*Math.PI*i/nSeg);
+            s2+=`${xp2} ${yp2},`;
+            sectorPoints+=`M${xp} ${yp} L ${xp2} ${yp2}`;
+        }
+        
+        s=s.slice(0,-1);
+        s2=s2.slice(0,-1);
+        poly.setAttribute('points',s);
+        poly.setAttribute('style','stroke: black; stroke-width: 1; fill:transparent');
+        poly.setAttribute('transform-origin','center');
+        poly.setAttribute('transform','rotate('+(360/nSeg/2+270)+')'); 
+        circ3.setAttribute('cx',String(x));
+        circ3.setAttribute('cy',String(y));
+        circ3.setAttribute('r',String(outR-ringW/2));
+        circ3.setAttribute('stroke','rgba(0, 0, 0, 0.2)');
+        circ3.setAttribute('stroke-width',String(ringW));
+        circ3.setAttribute('fill','transparent');
+        circ.setAttribute('cx',String(x));
+        circ.setAttribute('cy',String(y));
+        circ.setAttribute('r',String(outR));
+        circ.setAttribute('stroke','black');
+        circ.setAttribute('fill','none');
+        circ.setAttribute('stroke-width','1');
+        circ2.setAttribute('cx',String(x));
+        circ2.setAttribute('cy',String(y));
+        circ2.setAttribute('r',String(innR));
+        circ2.setAttribute('stroke','black');
+        circ2.setAttribute('fill','none');
+        circ2.setAttribute('stroke-width','1');
+        poly2.setAttribute('points',s2);
+        poly2.setAttribute('style','stroke: black; stroke-width: 1; fill:transparent');
+        poly2.setAttribute('transform-origin','center');
+        poly2.setAttribute('transform','rotate('+(360/nSeg/2+270)+')');
+        path.setAttribute('d',sectorPoints);
+        path.setAttribute('stroke','black');
+        path.setAttribute('transform-origin','center');
+        path.setAttribute('transform','rotate('+(360/nSeg/2+270)+')');
+        size(sizeLine1,point0,point1,'#ff3300',x,y,x+outR,y,-150);//центр-внешний радиус
+        size(sizeLine2,point2,point3,'#009933',x-outR,y,x-outR+ringW,y,10);
+        size(sizeLine3,point4,point5,'#0099ff',x-outR+ringW,y,x-outR+ringW+marginInn,y,90+360/nSeg/2);
+        size(sizeLine4,point6,point7,'#cc6600',x,y-outR,x,y-outR-marginOut,360/nSeg);
+//*************************svg2*******************
+        cs=[x-b/2,y+h/2,x-c/2,y-h/2,x+c/2,y-h/2,x+b/2,y+h/2];
+        coors='';
+        for(let i=0;i<4;i++){
+            coors+=cs[i*2];
+            coors+=' ';
+            coors+=cs[i*2+1];
+            coors+=',';
+        }
+        let xoffset=svgL/2-10-b/2;
+        coors=coors.slice(0,-1);
+        seg.setAttribute('points',coors);
+        seg.setAttribute('transform','translate(-'+xoffset+',0)');
+        seg.setAttribute('fill','url(#img1)');
+        seg.setAttribute('stroke','black');
+        let yoffset=h/2-b/2/Math.tan(angle/2);
+        svg2arc.setAttribute('d',myArc(x,y+yoffset,outR,angle)+myArc(x,y+yoffset,outR-ringW,angle));
+        svg2arc.setAttribute('stroke','black');
+        svg2arc.setAttribute('fill','transparent');
+        svg2arc2.setAttribute('d',myArc(x,y+yoffset,outR-ringW/2,angle));
+        svg2arc2.setAttribute('stroke','rgba(0, 0, 0, 0.2)');
+        svg2arc2.setAttribute('stroke-width',String(ringW));
+        svg2arc2.setAttribute('fill','transparent');
+        svg2arc.setAttribute('transform','translate(-'+xoffset+',0)');
+        svg2arc2.setAttribute('transform','translate(-'+xoffset+',0)');
+        
+        let offcoors=myArc(x,y+yoffset,outR-ringW,angle).slice(1).split(' ');
+        
+        let iw='';
+        if(c<0.1){            
+            size2(svg2sizeLine1,sizeText1,0,0,0,0,0,k);
+        }else{
+            iw='M '+(x-c/2)+' '+(y-h/2)+' v -15 M '+(x+c/2)+' '+(y-h/2)+' v -15';
+        size2(svg2sizeLine1,sizeText1,-1,x-c/2-xoffset,y-h/2-15+3,x+c/2-xoffset,y-h/2-15+3,k);
+        }
+                
+        let yoffset2=-35-+Math.cos(angle/2)*marginInn;
+        
+        let iraw='';
+        if (marginInn<0.1){
+            size2(svg2sizeLine2,sizeText2,0,0,0,0,0,k);
+        }else{
+            iraw=' M '+offcoors[0]+' '+offcoors[1]+' v '+yoffset2+' M '+offcoors[8]+' '+offcoors[9]+' v '+yoffset2;
+            size2(svg2sizeLine2,sizeText2,-1,Number(offcoors[8])-xoffset,Number(offcoors[1])+yoffset2+3,Number(offcoors[0])-xoffset,Number(offcoors[9])+yoffset2+3,k);
+        }
+        
+        let segh=' M '+(x+c/2)+' '+(y-h/2)+' h '+(b/2-c/2+18)+' M '+(x+b/2)+' '+(y+h/2)+' h '+18;
+        size2(svg2sizeLine3,sizeText3,-2,-xoffset+15+x+b/2,y-h/2,-xoffset+15+x+b/2,y+h/2,k);
+        offcoors=myArc(x,y+yoffset,outR,angle).slice(1).split(' ');
+        yoffset=23+((outR+marginOut)/Math.cos(angle/2)-outR)*Math.cos(angle/2);
+        let oraw=' M '+offcoors[0]+' '+offcoors[1]+' v '+(yoffset)+' M '+offcoors[8]+' '+offcoors[9]+' v '+(yoffset);
+        size2(svg2sizeLine4,sizeText4,-1,-xoffset+Number(offcoors[8]),yoffset+Number(offcoors[9])-3,-xoffset+Number(offcoors[0]),yoffset+Number(offcoors[1])-3,k);
+        
+        let ow=' M '+(x-b/2)+' '+(y+h/2)+' v '+45+' M '+(x+b/2)+' '+(y+h/2)+' v '+45;
+         offline.setAttribute('d',iw+iraw+segh+oraw+ow);
+        offline.setAttribute('stroke','#8c8c8c');
+        offline.setAttribute('transform','translate(-'+xoffset+',0)');
+        size2(svg2sizeLine5,sizeText5,-1,-xoffset+x-b/2,y+h/2+45-3,x+b/2-xoffset,y+h/2+45-3,k);
+    }
+    Draw();
+//*************************************************
+    function f(num){
+        if(num==1){
+            outputSegments.value=inputSegments.value;
+            Draw();
+        }else if(num==2){
+            outputOutRad.value=inputOutRad.value;
+            let maxMarInn=Number(inputOutRad.value)-Number(inputRingWidth.value);
+            if(Number(inputMarginInner.value)>maxMarInn){
+                inputMarginInner.value=maxMarInn;
+                outputMarginInner.value=maxMarInn;
+                inputMarginInner.setAttribute('max',String(maxMarInn));
+            }
+            else{
+                inputMarginInner.setAttribute('max',String(maxMarInn));
+            }
+            Draw();
+        }else if(num==3){
+            outputRingWidth.value=inputRingWidth.value;
+            let maxMarInn=Number(inputOutRad.value)-Number(inputRingWidth.value);
+            if(Number(inputMarginInner.value)>maxMarInn){
+                inputMarginInner.value=maxMarInn;
+                outputMarginInner.value=maxMarInn;
+                inputMarginInner.setAttribute('max',String(maxMarInn));
+            }
+            else{
+                inputMarginInner.setAttribute('max',String(maxMarInn));
+            }
+            Draw();
+        }else if(num==4){
+            outputMarginInner.value=inputMarginInner.value;
+            Draw();
+        }else if(num==5){
+            outputMarginOuter.value=inputMarginOuter.value;
+            Draw();
+        }else{
+            outputScale.value=inputScale.value;
+            scale=Number(inputScale.value);
+            //меняется размер окна svg;
+        }
+    }
+ </script>
+</html>
