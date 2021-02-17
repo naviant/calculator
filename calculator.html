@@ -91,13 +91,13 @@ input[type=range]::-ms-thumb {
     <label><input type="range" min="10" max="100" id='inputRingWidth'>
     Ring width:<output id='outputRingWidth'></output></label>
     <br>
-    <label><input type="range" min="0" max="70" id='inputMarginInner'>
+    <label><input type="range" min="0" max="70" value='14' id='inputMarginInner'>
     Margin inner:<output id='outputMarginInner'></output></label>
     <br>
-    <label><input type="range" min="0" max="100" id='inputMarginOuter'>
+    <label><input type="range" min="0" max="100" value='16' id='inputMarginOuter'>
     Margin outer:<output id='outputMarginOuter'></output></label>
     <br>
-    <label><input type="range" min="50" max="300" id='inputScale'>
+    <label><input type="range" min="5" max="20" value='10' id='inputScale'>
     Scale:<output id='outputScale'></output></label>
     <br>
     <svg width="350px" height="350px">
@@ -110,10 +110,13 @@ input[type=range]::-ms-thumb {
         <g id='group'>
         </g>
     </svg>
-    <svg width="350px" height="350px" id='svg2'>
+    <svg width="300px" height="350px" id='svg2'>
         
     </svg>
+    <br>
+    <input value="Сохранить" type="button" id='button'>
 </body>
+<script src="FileSaver.js"></script>
 <script>
 //    Построение правильного многоугольника: 360 делится на кол-во граней, получаем угол;
     let inputSegments=document.getElementById('inputSegments');
@@ -129,6 +132,8 @@ input[type=range]::-ms-thumb {
     let inputScale=document.getElementById('inputScale');
     let outputScale=document.getElementById('outputScale');
     let group=document.getElementById('group');
+    let button=document.getElementById('button');
+    
     outputSegments.value=inputSegments.value;
     outputOutRad.value=inputOutRad.value;
     outputRingWidth.value=inputRingWidth.value;
@@ -142,12 +147,10 @@ input[type=range]::-ms-thumb {
     inputMarginInner.addEventListener('input',()=>f(4));
     inputMarginOuter.addEventListener('input',()=>f(5));
     inputScale.addEventListener('input',()=>f(6));
+    button.addEventListener('click',save);
     //*************************************************
     let svg=document.querySelector('svg');
-    let svg2=document.getElementById('svg2');    
-    let poly=document.createElementNS("http://www.w3.org/2000/svg", "polygon");
-    let poly2=document.createElementNS("http://www.w3.org/2000/svg", "polygon");
-    let path=document.createElementNS("http://www.w3.org/2000/svg", "path");
+    let svg2=document.getElementById('svg2');   
     let circ=document.createElementNS("http://www.w3.org/2000/svg", "circle");
     let circ2=document.createElementNS("http://www.w3.org/2000/svg", "circle");
     let circ3=document.createElementNS("http://www.w3.org/2000/svg", "circle");
@@ -179,11 +182,10 @@ input[type=range]::-ms-thumb {
     let svg2sizeLine4=document.createElementNS("http://www.w3.org/2000/svg", "path");
     let svg2sizeLine5=document.createElementNS("http://www.w3.org/2000/svg", "path");
     
+    
+    
     fillPoly.setAttribute('id','fillPoly');
-    svg.append(fillPoly);
-    svg.append(poly);
-    svg.append(poly2);
-    svg.append(path);
+    svg.append(fillPoly);    
     svg.append(circ);
     svg.append(circ2);
     svg.append(circ3);
@@ -214,14 +216,16 @@ input[type=range]::-ms-thumb {
     svg2.append(svg2sizeLine4);
     svg2.append(svg2sizeLine5);
     //*************************************************
-    let svgL=Number(svg.getAttribute('width').slice(0,-2)); 
-    let x=svgL/2;
-    let y=x;
-    let r=x-5;
-    let maxLen=Number(inputOutRad.getAttribute('max'))+Number(inputMarginOuter.getAttribute('max'));
     
-    //*************************************************
-    function size(sizeLineEl,point,point2,value,x1,y1,x2,y2,angle){ 
+    let scale=Number(inputScale.value);
+    function save(){
+        
+        let svgDoc = '<svg width="350" height="350" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"  id=\'svg\'>'+svg.innerHTML+'</svg>';
+        
+        let file = new File([svgDoc], "file.svg", {type: "image/svg+xml"});
+        saveAs(file);
+    }
+    function size(sizeLineEl,point,point2,value,x1,y1,x2,y2,angle,svgCenter){ 
 //      залить линию градиентом белый-цвет_фона-белый
         x1=String(x1);
         y1=String(y1);
@@ -231,7 +235,7 @@ input[type=range]::-ms-thumb {
 ' '+y2));
         sizeLineEl.setAttribute('stroke',value);
         sizeLineEl.setAttribute('stroke-width','4');
-        sizeLineEl.setAttribute('transform-origin','center');
+        sizeLineEl.setAttribute('transform-origin',svgCenter);
         sizeLineEl.setAttribute('transform','rotate('+angle+')');
         if(point!=0){
         point.setAttribute('cx',x1);
@@ -239,7 +243,7 @@ input[type=range]::-ms-thumb {
         point.setAttribute('r','4');
         point.setAttribute('fill',value);
         point.setAttribute('stroke','white');
-        point.setAttribute('transform-origin','center');
+        point.setAttribute('transform-origin',svgCenter);
         point.setAttribute('transform','rotate('+angle+')');}
         if(point2!=0){
         point2.setAttribute('cx',x2);
@@ -247,7 +251,7 @@ input[type=range]::-ms-thumb {
         point2.setAttribute('r','4');
         point2.setAttribute('fill',value);
         point2.setAttribute('stroke','white');
-        point2.setAttribute('transform-origin','center');
+        point2.setAttribute('transform-origin',svgCenter);
         point2.setAttribute('transform','rotate('+angle+')');}
     }
     function size2(sizeLineEl,textEl,value,x1,y1,x2,y2,k){     //   sizeLineEl,textEl - svg эл-ты path и text;
@@ -303,13 +307,17 @@ input[type=range]::-ms-thumb {
             return ('M'+xstart+' '+ystart+' A '+r+' '+r+' 0 0 1 '+xend+' '+yend+' ');
         }
     function Draw(){
+        let svgL=Number(svg.getAttribute('width').slice(0,-2));
+        let x=svgL/2;
+        let y=x;
+        let r=x-5;
         group.innerHTML='';
         let nSeg=Number(inputSegments.value);
         let outR=Number(inputOutRad.value);
         let ringW=Number(inputRingWidth.value);
         let marginInn=Number(inputMarginInner.value);
         let marginOut=Number(inputMarginOuter.value);
-        let scale=Number(inputScale.value);        
+            
         let angle=360/nSeg*Math.PI/180;
         let k=(r*Math.cos(angle/2))/(outR+marginOut);
         
@@ -321,7 +329,6 @@ input[type=range]::-ms-thumb {
         let l=Math.sin(angle/2)*a;
         let c=b-2*l;
         let h=Math.cos(angle/2)*a;
-        
         a*=k;
         b*=k;
         c*=k;
@@ -333,10 +340,10 @@ input[type=range]::-ms-thumb {
         marginOut*=k;
         ringW*=k;
         marginInn*=k;
-        let imgsize=400*(k+0.1);
-       console.log(imgsize);
-       document.getElementById('img').setAttribute('width',String(imgsize));
-        document.getElementById('img').setAttribute('height',String(imgsize));
+        r2*=k;
+        let imgSize=Math.round(400*(k+0.1));
+       document.getElementById('img').setAttribute('width',String(imgSize));
+        document.getElementById('img').setAttribute('height',String(imgSize));
         let cs=[x-b/2,y-outR-marginOut,x+b/2,y-outR-marginOut,x+c/2,y-outR-marginOut+h,x-c/2,y-outR-marginOut+h];
         let coors='';
         for(let i=0;i<4;i++){
@@ -348,6 +355,7 @@ input[type=range]::-ms-thumb {
         coors=coors.slice(0,-1);
         fillPoly.setAttribute('points',coors);
         fillPoly.setAttribute('fill','url(#img1)');
+        fillPoly.setAttribute('stroke','black');
         for(let i=1;i<nSeg;i++){
             let use=document.createElementNS("http://www.w3.org/2000/svg", "use");
             use.setAttribute('href','#fillPoly');
@@ -355,8 +363,6 @@ input[type=range]::-ms-thumb {
             use.setAttribute('transform','rotate('+(360/nSeg*i)+')');
             group.append(use);
         }
-        
-        r2*=k;        
         let s='';
         let s2='';
         let sectorPoints='';
@@ -372,10 +378,6 @@ input[type=range]::-ms-thumb {
         
         s=s.slice(0,-1);
         s2=s2.slice(0,-1);
-        poly.setAttribute('points',s);
-        poly.setAttribute('style','stroke: black; stroke-width: 1; fill:transparent');
-        poly.setAttribute('transform-origin','center');
-        poly.setAttribute('transform','rotate('+(360/nSeg/2+270)+')'); 
         circ3.setAttribute('cx',String(x));
         circ3.setAttribute('cy',String(y));
         circ3.setAttribute('r',String(outR-ringW/2));
@@ -394,18 +396,11 @@ input[type=range]::-ms-thumb {
         circ2.setAttribute('stroke','black');
         circ2.setAttribute('fill','none');
         circ2.setAttribute('stroke-width','1');
-        poly2.setAttribute('points',s2);
-        poly2.setAttribute('style','stroke: black; stroke-width: 1; fill:transparent');
-        poly2.setAttribute('transform-origin','center');
-        poly2.setAttribute('transform','rotate('+(360/nSeg/2+270)+')');
-        path.setAttribute('d',sectorPoints);
-        path.setAttribute('stroke','black');
-        path.setAttribute('transform-origin','center');
-        path.setAttribute('transform','rotate('+(360/nSeg/2+270)+')');
-        size(sizeLine1,point0,point1,'#ff3300',x,y,x+outR,y,-150);//центр-внешний радиус
-        size(sizeLine2,point2,point3,'#009933',x-outR,y,x-outR+ringW,y,10);
-        size(sizeLine3,point4,point5,'#0099ff',x-outR+ringW,y,x-outR+ringW+marginInn,y,90+360/nSeg/2);
-        size(sizeLine4,point6,point7,'#cc6600',x,y-outR,x,y-outR-marginOut,360/nSeg);
+       let svgCenter=svgL/2+'px '+svgL/2+'px';
+        size(sizeLine1,point0,point1,'#ff3300',x,y,x+outR,y,-150,svgCenter);//центр-внешний радиус
+        size(sizeLine2,point2,point3,'#00b300',x-outR,y,x-outR+ringW,y,10,svgCenter);
+        size(sizeLine3,point4,point5,'#0099ff',x-outR+ringW,y,x-outR+ringW+marginInn,y,90+360/nSeg/2,svgCenter);
+        size(sizeLine4,point6,point7,'#cc6600',x,y-outR,x,y-outR-marginOut,360/nSeg,svgCenter);
 //*************************svg2*******************
         cs=[x-b/2,y+h/2,x-c/2,y-h/2,x+c/2,y-h/2,x+b/2,y+h/2];
         coors='';
@@ -504,7 +499,17 @@ input[type=range]::-ms-thumb {
         }else{
             outputScale.value=inputScale.value;
             scale=Number(inputScale.value);
+            scale/=10;
+            console.log('scale '+scale);
+            svgL=Math.round(350*scale);
+            svg.setAttribute('width',String(svgL)+'px');
+            svg.setAttribute('height',String(svgL)+'px');
+            svg2.setAttribute('width',String(svgL)+'px');
+            svg2.setAttribute('height',String(svgL)+'px');
             //меняется размер окна svg;
+            Draw();
+            console.log('svgl '+svgL);
+            console.log(svg.getAttribute('width'));
         }
     }
  </script>
