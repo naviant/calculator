@@ -118,7 +118,6 @@ input[type=range]::-ms-thumb {
 </body>
 <script src="FileSaver.js"></script>
 <script>
-//    Построение правильного многоугольника: 360 делится на кол-во граней, получаем угол;
     let inputSegments=document.getElementById('inputSegments');
     let outputSegments=document.getElementById('outputSegments');
     let inputOutRad=document.getElementById('inputOutRad');
@@ -226,7 +225,6 @@ input[type=range]::-ms-thumb {
         saveAs(file);
     }
     function size(sizeLineEl,point,point2,value,x1,y1,x2,y2,angle,svgCenter){ 
-//      залить линию градиентом белый-цвет_фона-белый
         x1=String(x1);
         y1=String(y1);
         x2=String(x2);
@@ -316,8 +314,7 @@ input[type=range]::-ms-thumb {
         let outR=Number(inputOutRad.value);
         let ringW=Number(inputRingWidth.value);
         let marginInn=Number(inputMarginInner.value);
-        let marginOut=Number(inputMarginOuter.value);
-            
+        let marginOut=Number(inputMarginOuter.value);           
         let angle=360/nSeg*Math.PI/180;
         let k=(r*Math.cos(angle/2))/(outR+marginOut);
         
@@ -341,8 +338,11 @@ input[type=range]::-ms-thumb {
         ringW*=k;
         marginInn*=k;
         r2*=k;
-        let imgSize=Math.round(400*(k+0.1));
-       document.getElementById('img').setAttribute('width',String(imgSize));
+        let imgSize=Math.round(svgL+k*k*100);
+        console.log('k '+k);
+        console.log('svgL '+svgL);
+       console.log('imgSize '+imgSize);
+        document.getElementById('img').setAttribute('width',String(imgSize));
         document.getElementById('img').setAttribute('height',String(imgSize));
         let cs=[x-b/2,y-outR-marginOut,x+b/2,y-outR-marginOut,x+c/2,y-outR-marginOut+h,x-c/2,y-outR-marginOut+h];
         let coors='';
@@ -500,7 +500,6 @@ input[type=range]::-ms-thumb {
             outputScale.value=inputScale.value;
             scale=Number(inputScale.value);
             scale/=10;
-            console.log('scale '+scale);
             svgL=Math.round(350*scale);
             svg.setAttribute('width',String(svgL)+'px');
             svg.setAttribute('height',String(svgL)+'px');
@@ -508,8 +507,6 @@ input[type=range]::-ms-thumb {
             svg2.setAttribute('height',String(svgL)+'px');
             //меняется размер окна svg;
             Draw();
-            console.log('svgl '+svgL);
-            console.log(svg.getAttribute('width'));
         }
     }
  </script>
