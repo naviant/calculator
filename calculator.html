@@ -1,11 +1,14 @@
 <html>
 <head>
     <style>
-        *{
-            margin: 15px;
+        
+        input[type=number] {
+            width:4em;
+        }
+        input{
+            margin-top: 15px;
         }
         svg{
-/*            border: 1px solid black;*/
             margin: 5px;
         }
         
@@ -21,8 +24,8 @@
             border: 1px solid red;            
         }
         #inputRingWidth[type=range]{
-            background: #009933; 
-            border: 1px solid #009933;            
+            background: #00b300; 
+            border: 1px solid #00b300;            
         }
         #inputMarginInner[type=range]{
             background: #0099ff; 
@@ -40,8 +43,8 @@
 input[type=range]::-webkit-slider-thumb {
   -webkit-appearance: none;
   border: 1px solid #000000;
-  height: 15px;
-  width: 15px;
+  height: 20px;
+  width: 20px;
   border-radius: 50%;
   background: #ffffff;
 }
@@ -52,8 +55,8 @@ input[type=range]::-webkit-slider-thumb {
 /* All the same stuff for Firefox */
 input[type=range]::-moz-range-thumb {
   border: 1px solid #000000;
-  height: 15px;
-  width: 15px;
+  height: 20px;
+  width: 20px;
   border-radius: 50%;
   background: #ffffff;
 }
@@ -64,8 +67,8 @@ input[type=range]::-moz-range-thumb {
 /* All the same stuff for IE */
 input[type=range]::-ms-thumb {
   border: 1px solid #000000;
-  height: 15px;
-  width: 15px;
+  height: 20px;
+  width: 20px;
   border-radius: 50%;
   background: #ffffff;
 }
@@ -73,48 +76,84 @@ input[type=range]::-ms-thumb {
             background:#e6e6e6;}
 input[type=range]::-ms-thumb {
   border: 1px solid #000000;
-  height: 15px;
-  width: 15px;
+  height: 20px;
+  width: 20px;
   border-radius: 50%;
   background: #ffffff;
 }
+        .pics{
+            display: flex;
+            align-items: center;
+        }
+        .blocks{
+            display: flex;
+        }
+@media screen and (orientation: portrait) {
+    .pics{
+        flex-direction: row;
+    }
+    .blocks{
+        flex-direction: column;
+    }
+    .sliders{
+        margin-left: 20px;
+    }
+        }
+
+@media screen and (orientation: landscape) {
+    .pics{
+      flex-direction: column;
+    }
+    .blocks{
+        flex-direction: row;
+    }
+    .sliders{
+        margin-top: 100px;
+    }
+}
+        #button{
+            margin: 20px;
+        }
+
     </style>
     
 </head>
 <body>
-    <label><input type="range" min="4" max="20" id='inputSegments' value="6">
-        Segments:<output id='outputSegments'></output></label>
-    <br>
-    <label><input type="range" min="100" max="150" id='inputOutRad' background-color='white'>
-        Outside radius:<output id='outputOutRad'></output></label>
-    <br>
-    <label><input type="range" min="10" max="100" id='inputRingWidth'>
-    Ring width:<output id='outputRingWidth'></output></label>
-    <br>
-    <label><input type="range" min="0" max="70" value='14' id='inputMarginInner'>
-    Margin inner:<output id='outputMarginInner'></output></label>
-    <br>
-    <label><input type="range" min="0" max="100" value='16' id='inputMarginOuter'>
-    Margin outer:<output id='outputMarginOuter'></output></label>
-    <br>
-    <label><input type="range" min="5" max="20" value='10' id='inputScale'>
-    Scale:<output id='outputScale'></output></label>
-    <br>
-    <svg width="350px" height="350px">
+    <div class='blocks'>
+    <div class='pics'>
+    <svg width="370px" height="370px">
         <defs>
     <pattern id="img1" width="1" height="1" >
-        <image xlink:href="texture.jpeg"
-            width="400" height="400" id='img' />
+        <image xlink:href="texture3.jpg"
+            width="250" height="250" id='img' />
     </pattern>
         </defs>
         <g id='group'>
         </g>
     </svg>
-    <svg width="300px" height="350px" id='svg2'>
-        
+    <svg width="300px" height="300px" id='svg2'>        
     </svg>
     <br>
-    <input value="Сохранить" type="button" id='button'>
+    </div>    
+     
+    <div class='sliders'>
+        <label><input type="range" min="4" max="20" id='inputSegments' value="6"><input type="number" min="4" max="20" id='outputSegments'>
+        Segments (4-20)</label>
+    <br>
+        <label><input type="range" min="50" max="500" id='inputOutRad' background-color='white'><input type="number" min="50" max="500" id='outputOutRad'>
+        Outside radius (50-500mm)</label>
+    <br>
+        <label><input type="range" min="10" max="275" id='inputRingWidth'><input type="number" min="10" max="275" id='outputRingWidth'>
+    Ring width (10-<span id='rwm'>275</span>mm)</label>
+    <br>
+        <label><input type="range" min="0" max="70" value='30' id='inputMarginInner'><input type="number" min="0" max="70" id='outputMarginInner'>
+    Margin inner (0-<span id='mim'>70</span>mm)</label>
+    <br>
+        <label><input type="range" min="0" max="200" value='50' id='inputMarginOuter'><input type="number" min="0" max="200" id='outputMarginOuter'>
+    Margin outer (0-200mm)</label>
+    <br></div>
+    </div>
+    <input value="Сохранить" type="button" id='button'>   
 </body>
 <script src="FileSaver.js"></script>
 <script>
@@ -128,26 +167,29 @@ input[type=range]::-ms-thumb {
     let otputMarginInner=document.getElementById('outputMarginInner');
     let inputMarginOuter=document.getElementById('inputMarginOuter');
     let outputMarginOuter=document.getElementById('outputMarginOuter');
-    let inputScale=document.getElementById('inputScale');
-    let outputScale=document.getElementById('outputScale');
     let group=document.getElementById('group');
     let button=document.getElementById('button');
-    
+    let rwm=document.getElementById('rwm');
+    let mim=document.getElementById('mim');
     outputSegments.value=inputSegments.value;
     outputOutRad.value=inputOutRad.value;
     outputRingWidth.value=inputRingWidth.value;
     outputMarginInner.value=inputMarginInner.value;
     outputMarginOuter.value=inputMarginOuter.value;
-    outputScale.value=inputScale.value;
-    //*************************************************
+    let maxMarInn=Number(inputOutRad.value)-Number(inputRingWidth.value);
+    inputMarginInner.setAttribute('max',String(maxMarInn));
+    outputMarginInner.setAttribute('max',String(maxMarInn))
+    mim.textContent=String(maxMarInn);
     inputSegments.addEventListener('input',()=>f(1));
+    outputSegments.addEventListener('change',()=>f(11))
     inputOutRad.addEventListener('input',()=>f(2));
+    outputOutRad.addEventListener('change',()=>f(22))
     inputRingWidth.addEventListener('input',()=>f(3));
+    outputRingWidth.addEventListener('change',()=>f(33));
     inputMarginInner.addEventListener('input',()=>f(4));
+    otputMarginInner.addEventListener('change',()=>f(44))
     inputMarginOuter.addEventListener('input',()=>f(5));
-    inputScale.addEventListener('input',()=>f(6));
-    button.addEventListener('click',save);
-    //*************************************************
+    outputMarginOuter.addEventListener('change',()=>f(55))
     let svg=document.querySelector('svg');
     let svg2=document.getElementById('svg2');   
     let circ=document.createElementNS("http://www.w3.org/2000/svg", "circle");
@@ -157,6 +199,9 @@ input[type=range]::-ms-thumb {
     let sizeLine2=document.createElementNS("http://www.w3.org/2000/svg", "path");
     let sizeLine3=document.createElementNS("http://www.w3.org/2000/svg", "path");
     let sizeLine4=document.createElementNS("http://www.w3.org/2000/svg", "path"); 
+    let sizeLineV=document.createElementNS("http://www.w3.org/2000/svg", "path"); 
+    let sizeLineH=document.createElementNS("http://www.w3.org/2000/svg", "path"); 
+    let offline1=document.createElementNS("http://www.w3.org/2000/svg", "path"); 
     let point0=document.createElementNS("http://www.w3.org/2000/svg", "circle"); 
     let point1=document.createElementNS("http://www.w3.org/2000/svg", "circle"); 
     let point2=document.createElementNS("http://www.w3.org/2000/svg", "circle"); 
@@ -169,20 +214,19 @@ input[type=range]::-ms-thumb {
     let seg=document.createElementNS("http://www.w3.org/2000/svg", "polygon"); 
     let svg2arc=document.createElementNS("http://www.w3.org/2000/svg", "path");
     let svg2arc2=document.createElementNS("http://www.w3.org/2000/svg", "path");
-    let offline=document.createElementNS("http://www.w3.org/2000/svg", "path");
-    let sizeText1=document.createElementNS("http://www.w3.org/2000/svg", "text");
-    let sizeText2=document.createElementNS("http://www.w3.org/2000/svg", "text");
-    let sizeText3=document.createElementNS("http://www.w3.org/2000/svg", "text");
-    let sizeText4=document.createElementNS("http://www.w3.org/2000/svg", "text");
-    let sizeText5=document.createElementNS("http://www.w3.org/2000/svg", "text");
+    let offline2=document.createElementNS("http://www.w3.org/2000/svg", "path");
+    let svg1sizeText1=document.createElementNS("http://www.w3.org/2000/svg", "text");
+    let svg1sizeText2=document.createElementNS("http://www.w3.org/2000/svg", "text");
+    let svg2sizeText1=document.createElementNS("http://www.w3.org/2000/svg", "text");
+    let svg2sizeText2=document.createElementNS("http://www.w3.org/2000/svg", "text");
+    let svg2sizeText3=document.createElementNS("http://www.w3.org/2000/svg", "text");
+    let svg2sizeText4=document.createElementNS("http://www.w3.org/2000/svg", "text");
+    let svg2sizeText5=document.createElementNS("http://www.w3.org/2000/svg", "text");   
     let svg2sizeLine1=document.createElementNS("http://www.w3.org/2000/svg", "path");
     let svg2sizeLine2=document.createElementNS("http://www.w3.org/2000/svg", "path");
     let svg2sizeLine3=document.createElementNS("http://www.w3.org/2000/svg", "path");
     let svg2sizeLine4=document.createElementNS("http://www.w3.org/2000/svg", "path");
-    let svg2sizeLine5=document.createElementNS("http://www.w3.org/2000/svg", "path");
-    
-    
-    
+    let svg2sizeLine5=document.createElementNS("http://www.w3.org/2000/svg", "path"); 
     fillPoly.setAttribute('id','fillPoly');
     svg.append(fillPoly);    
     svg.append(circ);
@@ -192,6 +236,11 @@ input[type=range]::-ms-thumb {
     svg.append(sizeLine2);
     svg.append(sizeLine3);
     svg.append(sizeLine4);
+    svg.append(sizeLineV);
+    svg.append(sizeLineH);    
+    svg.append(svg1sizeText1);
+    svg.append(svg1sizeText2);
+    svg.append(offline1);
     svg.append(point1);
     svg.append(point2);
     svg.append(point3);
@@ -203,22 +252,19 @@ input[type=range]::-ms-thumb {
     svg2.append(seg);
     svg2.append(svg2arc);
     svg2.append(svg2arc2);
-    svg2.append(offline);
-    svg2.append(sizeText1);
-    svg2.append(sizeText2);
-    svg2.append(sizeText3);
-    svg2.append(sizeText4);
-    svg2.append(sizeText5);
+    svg2.append(offline2);
+    svg2.append(svg2sizeText1);
+    svg2.append(svg2sizeText2);
+    svg2.append(svg2sizeText3);
+    svg2.append(svg2sizeText4);
+    svg2.append(svg2sizeText5);
     svg2.append(svg2sizeLine1);
     svg2.append(svg2sizeLine2);
     svg2.append(svg2sizeLine3);
     svg2.append(svg2sizeLine4);
     svg2.append(svg2sizeLine5);
     //*************************************************
-    
-    let scale=Number(inputScale.value);
-    function save(){
-        
+    function save(){        
         let svgDoc = '<svg width="350" height="350" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"  id=\'svg\'>'+svg.innerHTML+'</svg>';
         
         let file = new File([svgDoc], "file.svg", {type: "image/svg+xml"});
@@ -252,7 +298,8 @@ input[type=range]::-ms-thumb {
         point2.setAttribute('transform-origin',svgCenter);
         point2.setAttribute('transform','rotate('+angle+')');}
     }
-    function size2(sizeLineEl,textEl,value,x1,y1,x2,y2,k){     //   sizeLineEl,textEl - svg эл-ты path и text;
+    function size2(sizeLineEl,textEl,value,x1,y1,x2,y2,k){
+        //   sizeLineEl,textEl - svg эл-ты path и text;
         if(value==0){
             textEl.textContent='';
             sizeLineEl.setAttribute('d','');
@@ -272,7 +319,7 @@ input[type=range]::-ms-thumb {
             let ny=y1;
             x1=x2;x2=nx;y1=y2;y2=ny;
         }
-        value/=k;
+        if(k!=0){value/=k}
         let x3=8*Math.cos(angle1)+x1;
         let y3=8*Math.sin(angle1)+y1;
         let x4=8*Math.cos(angle2)+x1;
@@ -304,11 +351,18 @@ input[type=range]::-ms-thumb {
             let yend=ystart;
             return ('M'+xstart+' '+ystart+' A '+r+' '+r+' 0 0 1 '+xend+' '+yend+' ');
         }
+    let svgL=350;
+    let x=svgL/2;
+    let r=x-10;
+    let outRmax=Number(inputOutRad.getAttribute('max'));
+    let marginOutMax=Number(inputMarginOuter.getAttribute('max'));
+    let nSeg=Number(inputSegments.value);
+    let angle=360/nSeg*Math.PI/180;    
+    let kMin=(r*Math.cos(1.57/2))/(outRmax+marginOutMax);
+    let imgSizeMin=Math.round(2*r/1.41);
     function Draw(){
-        let svgL=Number(svg.getAttribute('width').slice(0,-2));
         let x=svgL/2;
         let y=x;
-        let r=x-5;
         group.innerHTML='';
         let nSeg=Number(inputSegments.value);
         let outR=Number(inputOutRad.value);
@@ -316,10 +370,58 @@ input[type=range]::-ms-thumb {
         let marginInn=Number(inputMarginInner.value);
         let marginOut=Number(inputMarginOuter.value);           
         let angle=360/nSeg*Math.PI/180;
-        let k=(r*Math.cos(angle/2))/(outR+marginOut);
-        
+        let k=(r*Math.cos(angle/2))/(outR+marginOut);     
         let innR=outR-ringW;
         let r2=innR-marginInn;
+        let H;
+        let V=(outR+marginOut)*2;
+        let x1l1;
+        let y1l1;
+        let x2l1;
+        let y2l1;
+        let x1l2;
+        let x11l2;
+        let y1l2;
+        let x2l2;
+        let y2l2;
+        if(nSeg%2==0){
+            if(nSeg%4==0){
+                H=(outR+marginOut)*2;
+                y1l1=Math.round(y+Math.tan(angle/2)*(outR+marginOut)*k);
+                y2l1=Math.round(V*k/2)+25+y;
+            }else{
+                H=(outR+marginOut)/Math.cos(angle/2)*2;
+                y1l1=y;
+                y2l1=Math.round(V*k/2)+25+y;
+            }
+            x1l2=Math.round(x+Math.tan(angle/2)*(outR+marginOut)*k);
+            x11l2=x1l2;
+            y2l2=y+Math.round((outR+marginOut)*k)
+        }else{
+            H=Math.sin(Math.trunc(nSeg/2)*angle/2)*2*(outR+marginOut)/Math.cos(angle/2);
+            V=outR+marginOut+(outR+marginOut)/Math.cos(angle/2);
+            if((nSeg-1)%4==0){
+                y1l1=Math.round(y+Math.sin((Math.PI-angle*Math.trunc(nSeg/2))/2)*(outR+marginOut)/Math.cos(angle/2)*k);
+                y2l1=Math.round(y+(outR+marginOut)/Math.cos(angle/2)*k+25);
+            }else{
+                y1l1=Math.round(y-Math.sin((Math.PI-angle*Math.trunc(nSeg/2))/2)*(outR+marginOut)/Math.cos(angle/2)*k);
+                y2l1=Math.round(y+(outR+marginOut)/Math.cos(angle/2)*k+25);
+            }
+            x1l2=Math.round(x+Math.tan(angle/2)*(outR+marginOut)*k);
+            x11l2=x;
+            y2l2=y+(outR+marginOut)/Math.cos(angle/2)*k;
+        }
+        H=Math.round(H*10)/10;
+        V=Math.round(V*10)/10;
+        x1l1=Math.round(x-k*H/2);
+        x2l1=Math.round(x+k*H/2);
+        y1l2=y-Math.round((outR+marginOut)*k);
+        x2l2=Math.round(x+H/2*k)+13;
+        let p=`M${x1l1} ${y1l1} V${y2l1}M${x2l1} ${y1l1} V${y2l1} M${x1l2} ${y1l2} H${x2l2}M${x11l2} ${y2l2} H${x2l2}`;
+        offline1.setAttribute('d',p);
+        offline1.setAttribute('stroke','#8c8c8c');
+        size2(sizeLineH,svg1sizeText1,H,x1l1,y2l1-3,x2l1,y2l1-3,0);
+        size2(sizeLineV,svg1sizeText2,V,x2l2-3,y1l2,x2l2-3,y2l2,0);
 //*************************svg2*******************
         let a=(outR+marginOut)/(Math.cos(angle/2))-outR+marginInn+ringW;
         let b=Math.tan(angle/2)*(outR+marginOut)*2;
@@ -338,10 +440,7 @@ input[type=range]::-ms-thumb {
         ringW*=k;
         marginInn*=k;
         r2*=k;
-        let imgSize=Math.round(svgL+k*k*100);
-        console.log('k '+k);
-        console.log('svgL '+svgL);
-       console.log('imgSize '+imgSize);
+        let imgSize=Math.round(imgSizeMin*Math.sqrt(k/kMin));
         document.getElementById('img').setAttribute('width',String(imgSize));
         document.getElementById('img').setAttribute('height',String(imgSize));
         let cs=[x-b/2,y-outR-marginOut,x+b/2,y-outR-marginOut,x+c/2,y-outR-marginOut+h,x-c/2,y-outR-marginOut+h];
@@ -352,6 +451,7 @@ input[type=range]::-ms-thumb {
             coors+=cs[i*2+1];
             coors+=',';
         }
+        let svgCenter=svgL/2+'px '+svgL/2+'px';
         coors=coors.slice(0,-1);
         fillPoly.setAttribute('points',coors);
         fillPoly.setAttribute('fill','url(#img1)');
@@ -359,7 +459,7 @@ input[type=range]::-ms-thumb {
         for(let i=1;i<nSeg;i++){
             let use=document.createElementNS("http://www.w3.org/2000/svg", "use");
             use.setAttribute('href','#fillPoly');
-            use.setAttribute('transform-origin','center');
+            use.setAttribute('transform-origin',svgCenter);
             use.setAttribute('transform','rotate('+(360/nSeg*i)+')');
             group.append(use);
         }
@@ -375,7 +475,6 @@ input[type=range]::-ms-thumb {
             s2+=`${xp2} ${yp2},`;
             sectorPoints+=`M${xp} ${yp} L ${xp2} ${yp2}`;
         }
-        
         s=s.slice(0,-1);
         s2=s2.slice(0,-1);
         circ3.setAttribute('cx',String(x));
@@ -396,12 +495,13 @@ input[type=range]::-ms-thumb {
         circ2.setAttribute('stroke','black');
         circ2.setAttribute('fill','none');
         circ2.setAttribute('stroke-width','1');
-       let svgCenter=svgL/2+'px '+svgL/2+'px';
         size(sizeLine1,point0,point1,'#ff3300',x,y,x+outR,y,-150,svgCenter);//центр-внешний радиус
-        size(sizeLine2,point2,point3,'#00b300',x-outR,y,x-outR+ringW,y,10,svgCenter);
+        size(sizeLine2,point2,point3,'#00e600',x-outR,y,x-outR+ringW,y,10,svgCenter);
         size(sizeLine3,point4,point5,'#0099ff',x-outR+ringW,y,x-outR+ringW+marginInn,y,90+360/nSeg/2,svgCenter);
-        size(sizeLine4,point6,point7,'#cc6600',x,y-outR,x,y-outR-marginOut,360/nSeg,svgCenter);
+        size(sizeLine4,point6,point7,'#cc6600',x,y-outR,x,y-outR-marginOut,360/nSeg,svgCenter);        
 //*************************svg2*******************
+        y=150;//(svg2L/2)
+        x=150;
         cs=[x-b/2,y+h/2,x-c/2,y-h/2,x+c/2,y-h/2,x+b/2,y+h/2];
         coors='';
         for(let i=0;i<4;i++){
@@ -410,7 +510,8 @@ input[type=range]::-ms-thumb {
             coors+=cs[i*2+1];
             coors+=',';
         }
-        let xoffset=svgL/2-10-b/2;
+//        let xoffset=svgL/2-10-b/2;
+        let xoffset=0;
         coors=coors.slice(0,-1);
         seg.setAttribute('points',coors);
         seg.setAttribute('transform','translate(-'+xoffset+',0)');
@@ -430,84 +531,132 @@ input[type=range]::-ms-thumb {
         let offcoors=myArc(x,y+yoffset,outR-ringW,angle).slice(1).split(' ');
         
         let iw='';
-        if(c<0.1){            
-            size2(svg2sizeLine1,sizeText1,0,0,0,0,0,k);
+        if(c<0.1){
+            size2(svg2sizeLine1,svg2sizeText1,0,0,0,0,0,k);
         }else{
             iw='M '+(x-c/2)+' '+(y-h/2)+' v -15 M '+(x+c/2)+' '+(y-h/2)+' v -15';
-        size2(svg2sizeLine1,sizeText1,-1,x-c/2-xoffset,y-h/2-15+3,x+c/2-xoffset,y-h/2-15+3,k);
+        size2(svg2sizeLine1,svg2sizeText1,-1,x-c/2-xoffset,y-h/2-15+3,x+c/2-xoffset,y-h/2-15+3,k);
         }
                 
-        let yoffset2=-35-+Math.cos(angle/2)*marginInn;
+        let yoffset2=-35-Math.cos(angle/2)*marginInn;
         
         let iraw='';
         if (marginInn<0.1){
-            size2(svg2sizeLine2,sizeText2,0,0,0,0,0,k);
+            size2(svg2sizeLine2,svg2sizeText2,0,0,0,0,0,k);
         }else{
             iraw=' M '+offcoors[0]+' '+offcoors[1]+' v '+yoffset2+' M '+offcoors[8]+' '+offcoors[9]+' v '+yoffset2;
-            size2(svg2sizeLine2,sizeText2,-1,Number(offcoors[8])-xoffset,Number(offcoors[1])+yoffset2+3,Number(offcoors[0])-xoffset,Number(offcoors[9])+yoffset2+3,k);
+            size2(svg2sizeLine2,svg2sizeText2,-1,Number(offcoors[8])-xoffset,Number(offcoors[1])+yoffset2+3,Number(offcoors[0])-xoffset,Number(offcoors[9])+yoffset2+3,k);
         }
         
         let segh=' M '+(x+c/2)+' '+(y-h/2)+' h '+(b/2-c/2+18)+' M '+(x+b/2)+' '+(y+h/2)+' h '+18;
-        size2(svg2sizeLine3,sizeText3,-2,-xoffset+15+x+b/2,y-h/2,-xoffset+15+x+b/2,y+h/2,k);
+        size2(svg2sizeLine3,svg2sizeText3,-2,-xoffset+15+x+b/2,y-h/2,-xoffset+15+x+b/2,y+h/2,k);
         offcoors=myArc(x,y+yoffset,outR,angle).slice(1).split(' ');
         yoffset=23+((outR+marginOut)/Math.cos(angle/2)-outR)*Math.cos(angle/2);
         let oraw=' M '+offcoors[0]+' '+offcoors[1]+' v '+(yoffset)+' M '+offcoors[8]+' '+offcoors[9]+' v '+(yoffset);
-        size2(svg2sizeLine4,sizeText4,-1,-xoffset+Number(offcoors[8]),yoffset+Number(offcoors[9])-3,-xoffset+Number(offcoors[0]),yoffset+Number(offcoors[1])-3,k);
-        
+        size2(svg2sizeLine4,svg2sizeText4,-1,-xoffset+Number(offcoors[8]),yoffset+Number(offcoors[9])-3,-xoffset+Number(offcoors[0]),yoffset+Number(offcoors[1])-3,k);        
         let ow=' M '+(x-b/2)+' '+(y+h/2)+' v '+45+' M '+(x+b/2)+' '+(y+h/2)+' v '+45;
-         offline.setAttribute('d',iw+iraw+segh+oraw+ow);
-        offline.setAttribute('stroke','#8c8c8c');
-        offline.setAttribute('transform','translate(-'+xoffset+',0)');
-        size2(svg2sizeLine5,sizeText5,-1,-xoffset+x-b/2,y+h/2+45-3,x+b/2-xoffset,y+h/2+45-3,k);
+         offline2.setAttribute('d',iw+iraw+segh+oraw+ow);
+        offline2.setAttribute('stroke','#8c8c8c');
+        offline2.setAttribute('transform','translate(-'+xoffset+',0)');
+        size2(svg2sizeLine5,svg2sizeText5,-1,-xoffset+x-b/2,y+h/2+45-3,x+b/2-xoffset,y+h/2+45-3,k);
     }
     Draw();
 //*************************************************
+    function check(outEl){
+        let val=Number(outEl.value);
+        let outMax=Number(outEl.getAttribute('max'));
+        let outMin=Number(outEl.getAttribute('min'));
+           if(val>outMax){
+            outEl.value=outMax;
+        }else if(val<outMin){
+                    outEl.value=outMin;}
+    }
     function f(num){
-        if(num==1){
+        if(num<10){
+            if(num==1){
             outputSegments.value=inputSegments.value;
             Draw();
         }else if(num==2){
             outputOutRad.value=inputOutRad.value;
-            let maxMarInn=Number(inputOutRad.value)-Number(inputRingWidth.value);
-            if(Number(inputMarginInner.value)>maxMarInn){
-                inputMarginInner.value=maxMarInn;
-                outputMarginInner.value=maxMarInn;
-                inputMarginInner.setAttribute('max',String(maxMarInn));
+            inputRingWidth.setAttribute('max',inputOutRad.value);
+            outputRingWidth.setAttribute('max',inputOutRad.value);
+            rwm.textContent=inputOutRad.value;
+            if(Number(inputOutRad.value)<Number(outputRingWidth.value)){
+                outputRingWidth.value=inputOutRad.value;
+                inputRingWidth.value=inputOutRad.value;
+                console.log('R<W');
             }
-            else{
-                inputMarginInner.setAttribute('max',String(maxMarInn));
+            let maxMarInn=Number(inputOutRad.value)-Number(inputRingWidth.value);
+            inputMarginInner.setAttribute('max',String(maxMarInn));
+            outputMarginInner.setAttribute('max',String(maxMarInn))
+            mim.textContent=String(maxMarInn);
+            if(Number(inputMarginInner.value)==maxMarInn){
+                outputMarginInner.value=String(maxMarInn);
             }
             Draw();
         }else if(num==3){
             outputRingWidth.value=inputRingWidth.value;
             let maxMarInn=Number(inputOutRad.value)-Number(inputRingWidth.value);
-            if(Number(inputMarginInner.value)>maxMarInn){
-                inputMarginInner.value=maxMarInn;
+            outputMarginInner.setAttribute('max',String(maxMarInn))
+            inputMarginInner.setAttribute('max',String(maxMarInn));
+            mim.textContent=String(maxMarInn);
+            if(Number(inputMarginInner.value)==maxMarInn){
                 outputMarginInner.value=maxMarInn;
-                inputMarginInner.setAttribute('max',String(maxMarInn));
-            }
-            else{
-                inputMarginInner.setAttribute('max',String(maxMarInn));
             }
             Draw();
         }else if(num==4){
             outputMarginInner.value=inputMarginInner.value;
             Draw();
-        }else if(num==5){
+        }else{
             outputMarginOuter.value=inputMarginOuter.value;
             Draw();
-        }else{
-            outputScale.value=inputScale.value;
-            scale=Number(inputScale.value);
-            scale/=10;
-            svgL=Math.round(350*scale);
-            svg.setAttribute('width',String(svgL)+'px');
-            svg.setAttribute('height',String(svgL)+'px');
-            svg2.setAttribute('width',String(svgL)+'px');
-            svg2.setAttribute('height',String(svgL)+'px');
-            //меняется размер окна svg;
-            Draw();
         }
+        }else{
+            if(num==11){
+            check(outputSegments);
+            inputSegments.value=outputSegments.value;
+            Draw();
+            }else if(num==22){
+                check(outputOutRad);
+                inputOutRad.value=outputOutRad.value;
+                inputRingWidth.setAttribute('max',inputOutRad.value);
+            outputRingWidth.setAttribute('max',inputOutRad.value);
+            rwm.textContent=inputOutRad.value;
+            if(Number(inputOutRad.value)<Number(outputRingWidth.value)){
+                outputRingWidth.value=inputOutRad.value;
+                inputRingWidth.value=inputOutRad.value;
+                console.log('R<W');
+            }
+            let maxMarInn=Number(inputOutRad.value)-Number(inputRingWidth.value);
+            inputMarginInner.setAttribute('max',String(maxMarInn));
+            outputMarginInner.setAttribute('max',String(maxMarInn))
+            mim.textContent=String(maxMarInn);
+            if(Number(inputMarginInner.value)==maxMarInn){
+                outputMarginInner.value=String(maxMarInn);
+            }
+                Draw()
+            }else if(num==33){
+                check(outputRingWidth);
+                inputRingWidth.value=outputRingWidth.value;
+                let maxMarInn=Number(inputOutRad.value)-Number(inputRingWidth.value);
+                outputMarginInner.setAttribute('max',String(maxMarInn))
+                inputMarginInner.setAttribute('max',String(maxMarInn));
+                mim.textContent=String(maxMarInn);
+                if(Number(inputMarginInner.value)==maxMarInn){
+                outputMarginInner.value=maxMarInn;
+                }
+                Draw();
+            }else if(num==44){
+                check(outputMarginInner);
+                inputMarginInner.value=outputMarginInner.value;
+                Draw(); 
+            }else{
+                check(outputMarginOuter);
+               inputMarginOuter.value=outputMarginOuter.value;
+            Draw(); 
+            }
+        }
+        
     }
  </script>
 </html>
