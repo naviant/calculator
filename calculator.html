@@ -65,28 +65,33 @@ input[type=range]::-moz-range-thumb {
 }
 
 /* All the same stuff for IE */
-input[type=range]::-ms-thumb {
-  border: 1px solid #000000;
-  height: 20px;
-  width: 20px;
-  border-radius: 50%;
-  background: #ffffff;
-}
+    input[type=range]::-ms-thumb {
+      border: 1px solid #000000;
+      height: 20px;
+      width: 20px;
+      border-radius: 50%;
+      background: #ffffff;
+    }
         input[type=range]:hover::-ms-thumb {
             background:#e6e6e6;}
-input[type=range]::-ms-thumb {
-  border: 1px solid #000000;
-  height: 20px;
-  width: 20px;
-  border-radius: 50%;
-  background: #ffffff;
-}
+    input[type=range]::-ms-thumb {
+      border: 1px solid #000000;
+      height: 20px;
+      width: 20px;
+      border-radius: 50%;
+      background: #ffffff;
+    }
         .pics{
+            border:solid green;
             display: flex;
             align-items: center;
         }
         .blocks{
             display: flex;
+        }
+        .sliders{
+            text-align: justify;
+            touch-action: none;
         }
 @media screen and (orientation: portrait) {
     .pics{
@@ -114,14 +119,26 @@ input[type=range]::-ms-thumb {
         #button{
             margin: 20px;
         }
-
+        #svg1{
+            border: solid blue;
+        }
+        #mainContainer{
+            border: solid black;
+            display: inline-block;
+            margin:auto;
+        }
+        #mainOutContainer{
+            text-align: center;
+        }
     </style>
     
 </head>
 <body>
+    <div id='mainOutContainer'>
+    <div id='mainContainer'>
     <div class='blocks'>
     <div class='pics'>
-    <svg width="370px" height="370px">
+    <svg width="400px" height="400px" id='svg1'>
         <defs>
     <pattern id="img1" width="1" height="1" >
         <image xlink:href="texture3.jpg"
@@ -152,8 +169,10 @@ input[type=range]::-ms-thumb {
         <label><input type="range" min="0" max="200" value='50' id='inputMarginOuter'><input type="number" min="0" max="200" id='outputMarginOuter'>
     Margin outer (0-200mm)</label>
     <br></div>
+    </div>    
+    <input value="Сохранить" type="button" id='button'>
     </div>
-    <input value="Сохранить" type="button" id='button'>   
+    </div>
 </body>
 <script src="FileSaver.js"></script>
 <script>
@@ -181,15 +200,16 @@ input[type=range]::-ms-thumb {
     outputMarginInner.setAttribute('max',String(maxMarInn))
     mim.textContent=String(maxMarInn);
     inputSegments.addEventListener('input',()=>f(1));
-    outputSegments.addEventListener('change',()=>f(11))
+    outputSegments.addEventListener('change',()=>f(11));
     inputOutRad.addEventListener('input',()=>f(2));
-    outputOutRad.addEventListener('change',()=>f(22))
+    outputOutRad.addEventListener('change',()=>f(22));
     inputRingWidth.addEventListener('input',()=>f(3));
     outputRingWidth.addEventListener('change',()=>f(33));
     inputMarginInner.addEventListener('input',()=>f(4));
-    otputMarginInner.addEventListener('change',()=>f(44))
+    otputMarginInner.addEventListener('change',()=>f(44));
     inputMarginOuter.addEventListener('input',()=>f(5));
-    outputMarginOuter.addEventListener('change',()=>f(55))
+    outputMarginOuter.addEventListener('change',()=>f(55));
+    button.addEventListener('pointerdown',save)
     let svg=document.querySelector('svg');
     let svg2=document.getElementById('svg2');   
     let circ=document.createElementNS("http://www.w3.org/2000/svg", "circle");
@@ -264,12 +284,15 @@ input[type=range]::-ms-thumb {
     svg2.append(svg2sizeLine4);
     svg2.append(svg2sizeLine5);
     //*************************************************
-    function save(){        
-        let svgDoc = '<svg width="350" height="350" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"  id=\'svg\'>'+svg.innerHTML+'</svg>';
+    function save(){
+        let pic=Document.createElementNS("http://www.w3.org/2000/svg",'svg');
+        pic.append();
+        let svgDoc = '<svg width="350" height="350" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"  id=\'svg\'>'+'</svg>';
         
         let file = new File([svgDoc], "file.svg", {type: "image/svg+xml"});
         saveAs(file);
     }
+    
     function size(sizeLineEl,point,point2,value,x1,y1,x2,y2,angle,svgCenter){ 
         x1=String(x1);
         y1=String(y1);
@@ -351,9 +374,10 @@ input[type=range]::-ms-thumb {
             let yend=ystart;
             return ('M'+xstart+' '+ystart+' A '+r+' '+r+' 0 0 1 '+xend+' '+yend+' ');
         }
-    let svgL=350;
+    let svgL=Number(svg.getAttribute('width').slice(0,-2));
+    console.log(svgL);
     let x=svgL/2;
-    let r=x-10;
+    let r=x-30;
     let outRmax=Number(inputOutRad.getAttribute('max'));
     let marginOutMax=Number(inputMarginOuter.getAttribute('max'));
     let nSeg=Number(inputSegments.value);
