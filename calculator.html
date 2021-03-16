@@ -319,15 +319,20 @@ input[type=range]::-moz-range-thumb {
             let file = new File([svgDoc], "file.svg", {type: "image/svg+xml"});
             saveAs(file);
             svgDoc = '<svg width=\'1000px\' height=\'1000px\' version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><g transform=\'scale('+x+')\'>'+pic.innerHTML+'</g></svg>';
-            file = new File([svgDoc], "Nfile.svg", {type: "image/svg+xml"});
-//            saveAs(file);
-            
+            file = new File([svgDoc], "Nfile.svg", {type: "image/svg+xml"});            
         }
         if(check2.checked){
             let newSeg=seg.cloneNode();
             newSeg.setAttribute('fill','transparent');
-            newSeg.setAttribute('style','fill:none');
+            newSeg.setAttribute('style','fill:white');
             let newImg=document.createElementNS("http://www.w3.org/2000/svg",'svg');
+            let backGround=document.createElementNS("http://www.w3.org/2000/svg",'rect');
+            backGround.setAttribute('style','fill:white');
+            backGround.setAttribute('x','0');
+            backGround.setAttribute('y','0');
+            backGround.setAttribute('width','877');
+            backGround.setAttribute('height','620');
+            newImg.append(backGround);
             let newGroup=document.createElementNS("http://www.w3.org/2000/svg",'g');
             newGroup.innerHTML=svg2.innerHTML.replace('url(#img1)','transparent');
             newGroup.setAttribute('transform','translate(400,50)');
@@ -363,18 +368,15 @@ input[type=range]::-moz-range-thumb {
             let Group3=document.createElementNS("http://www.w3.org/2000/svg",'g');
             
             newGroup.setAttribute('transform','translate('+((forSave1x1[0]/2-150))+','+((forSave1x1[1]/2-150))+')');
-            let newArc=svg2arc.cloneNode();
-            newArc.setAttribute('fill','transparent');
-            newArc.setAttribute('style','fill:none');
             let newSeg=seg.cloneNode();
-            newSeg.setAttribute('fill','transparent');
-            newSeg.setAttribute('style','fill:none');
+            newSeg.setAttribute('style','fill:white');
+            let newArc=svg2arc.cloneNode();
+            newArc.setAttribute('style','fill:none');
             pic.append(Group3);
             Group3.append(Group2);
             Group2.append(newGroup);
             newGroup.append(newArc);
-            newGroup.append(newSeg); 
-//            pic.append(Group2.cloneNode(true));
+            newGroup.append(newSeg);
             newGroup.setAttribute('transform','translate(-150,-150)');
             Group2.setAttribute('transform','scale('+3.78/(k)+')');
             Group3.setAttribute('transform','translate('+((3.78*forSave1x1[0]/2))+','+((3.78*forSave1x1[1]/2))+')');
@@ -442,7 +444,7 @@ input[type=range]::-moz-range-thumb {
         let y5=y2-8*Math.sin(angle1);
         let x6=x2-8*Math.cos(angle2);
         let y6=y2-8*Math.sin(angle2);        
-        value=round(value);
+        value=round(value,p=10);
         textEl.textContent=value;
         textEl.setAttribute('text-anchor','middle');
         textEl.setAttribute('x',String((x1+x2)/2));
@@ -683,8 +685,8 @@ input[type=range]::-moz-range-thumb {
         }else if(val<outMin){
                     outEl.value=outMin;}
     }
-    function round(val){
-        return Math.round(val*100)/100;
+    function round(val,p=100){
+        return Math.round(val*p)/p;
     }
     function f(num){
         if(num<10){
