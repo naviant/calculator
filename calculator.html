@@ -117,6 +117,8 @@ input[type=range]::-moz-range-thumb {
             border: 1px solid black;
             border-radius: 0.3em;
             padding: 5px;
+            padding-left: 10px;
+            padding-right: 10px;
             margin-top: 20px;
         }
         #mainContainer{
@@ -140,6 +142,12 @@ input[type=range]::-moz-range-thumb {
             border-bottom: 1px solid #c5bcbc;
             border-top: 1px solid #c5bcbc;
         }
+        svg{
+/*            border: solid black 1px;*/
+        }
+        .label{
+            font-size: 17px;
+        }
     </style>
     
 </head>
@@ -148,40 +156,38 @@ input[type=range]::-moz-range-thumb {
     <div id='mainContainer'>
     <div class='blocks'>
     <div class='pics'>
-    <svg width="400px" height="400px" id='svg1'>
+    <svg width="350px" height="320px" id='svg1'>
         <defs>
     <pattern id="img1" width="1" height="1" >
         <image xlink:href="texture3.jpg"
             width="250" height="250" id='img' />
     </pattern>
-        </defs>
-        <g id='group'>
-        </g>
+        </defs>        
     </svg>
-    <svg width="300px" height="300px" id='svg2'>        
+    <svg width="250px" height="250px" id='svg2'>        
     </svg>
     <br>
     </div>    
      
     <div class='sliders'>
-        <label><input type="range" min="4" max="20" id='inputSegments' value="6"><input type="number" min="4" max="20" id='outputSegments'>
+        <label class="label"><input type="range" min="4" max="20" id='inputSegments' value="6"><input type="number" min="4" max="20" id='outputSegments'>
         Segments (4-20)</label>
     <br>
-        <label><input type="range" min="50" max="500" id='inputOutRad' background-color='white'><input type="number" min="50" max="500" id='outputOutRad'>
+        <label class="label"><input type="range" min="50" max="500" id='inputOutRad' background-color='white'><input type="number" min="50" max="500" id='outputOutRad'>
         Outside radius (50-500mm)</label>
     <br>
-        <label><input type="range" min="10" max="275" id='inputRingWidth'><input type="number" min="10" max="275" id='outputRingWidth'>
+        <label class="label"><input type="range" min="10" max="275" id='inputRingWidth'><input type="number" min="10" max="275" id='outputRingWidth'>
     Ring width (10-<span id='rwm'>275</span>mm)</label>
     <br>
-        <label><input type="range" min="0" max="70" value='30' id='inputMarginInner'><input type="number" min="0" max="70" id='outputMarginInner'>
+        <label class="label"><input type="range" min="0" max="70" value='30' id='inputMarginInner'><input type="number" min="0" max="70" id='outputMarginInner'>
     Margin inner (0-<span id='mim'>70</span>mm)</label>
     <br>
-        <label><input type="range" min="0" max="200" value='50' id='inputMarginOuter'><input type="number" min="0" max="200" id='outputMarginOuter'>
+        <label class="label"><input type="range" min="0" max="200" value='50' id='inputMarginOuter'><input type="number" min="0" max="200" id='outputMarginOuter'>
     Margin outer (0-200mm)</label>
     <br></div>
     </div>    
     <div id='saveBlock'>
-        <label class='check'><input type='checkbox' id='check1'>.svg</label>
+        <label class='check'><input type='checkbox' id='check1' checked='true'>.svg</label>
         <label class='check'><input type='checkbox' id='check2'>A4 .png</label>
         <label class='check'><input type='checkbox' id='check3'>(1:1) .png</label><br>
         <input value="Save" type="button" id='button'>
@@ -202,13 +208,16 @@ input[type=range]::-moz-range-thumb {
     let otputMarginInner=document.getElementById('outputMarginInner');
     let inputMarginOuter=document.getElementById('inputMarginOuter');
     let outputMarginOuter=document.getElementById('outputMarginOuter');
-    let group=document.getElementById('group');
+//    let group=document.getElementById('group');
     let button=document.getElementById('button');
     let rwm=document.getElementById('rwm');
     let mim=document.getElementById('mim');
     let check1=document.getElementById('check1');
+    check1.addEventListener('change',()=>choise(1));
     let check2=document.getElementById('check2');
+    check2.addEventListener('change',()=>choise(2));
     let check3=document.getElementById('check3');
+    check3.addEventListener('change',()=>choise(3));
     outputSegments.value=inputSegments.value;
     outputOutRad.value=inputOutRad.value;
     outputRingWidth.value=inputRingWidth.value;
@@ -266,28 +275,33 @@ input[type=range]::-moz-range-thumb {
     let svg2sizeLine3=document.createElementNS("http://www.w3.org/2000/svg", "path");
     let svg2sizeLine4=document.createElementNS("http://www.w3.org/2000/svg", "path");
     let svg2sizeLine5=document.createElementNS("http://www.w3.org/2000/svg", "path"); 
+    let svgGroup=document.createElementNS("http://www.w3.org/2000/svg", "g"); 
+    let group=document.createElementNS("http://www.w3.org/2000/svg", "g"); 
     fillPoly.setAttribute('id','fillPoly');
-    svg.append(fillPoly);    
-    svg.append(circ);
-    svg.append(circ2);
-    svg.append(circ3);
-    svg.append(sizeLine1);
-    svg.append(sizeLine2);
-    svg.append(sizeLine3);
-    svg.append(sizeLine4);
-    svg.append(sizeLineV);
-    svg.append(sizeLineH);    
-    svg.append(svg1sizeText1);
-    svg.append(svg1sizeText2);
-    svg.append(offline1);
-    svg.append(point1);
-    svg.append(point2);
-    svg.append(point3);
-    svg.append(point4);
-    svg.append(point5);
-    svg.append(point0);  
-    svg.append(point6);  
-    svg.append(point7);    
+    svgGroup.setAttribute('transform','translate(0,-30)');
+    svg.append(svgGroup);    
+    svgGroup.append(fillPoly);    
+    svgGroup.append(group);
+    svgGroup.append(circ);
+    svgGroup.append(circ2);
+    svgGroup.append(circ3);
+    svgGroup.append(sizeLine1);
+    svgGroup.append(sizeLine2);
+    svgGroup.append(sizeLine3);
+    svgGroup.append(sizeLine4);
+    svgGroup.append(sizeLineV);
+    svgGroup.append(sizeLineH);    
+    svgGroup.append(svg1sizeText1);
+    svgGroup.append(svg1sizeText2);
+    svgGroup.append(offline1);
+    svgGroup.append(point1);
+    svgGroup.append(point2);
+    svgGroup.append(point3);
+    svgGroup.append(point4);
+    svgGroup.append(point5);
+    svgGroup.append(point0);  
+    svgGroup.append(point6);  
+    svgGroup.append(point7);
     svg2.append(seg);
     svg2.append(svg2arc);
     svg2.append(svg2arc2);
@@ -303,29 +317,53 @@ input[type=range]::-moz-range-thumb {
     svg2.append(svg2sizeLine4);
     svg2.append(svg2sizeLine5);
     //*************************************************
+    let choiseFlag=1;
+    let choiseList=[check1,check2,check3];
+    function choise(n){
+        choiseList[choiseFlag-1].checked=false;
+        if(n==1){
+            choiseFlag=1;
+            check1.checked=true;
+        }else if(n==2){
+            choiseFlag=2;
+            check2.checked=true;
+        }else{
+            choiseFlag=3;
+            check3.checked=true;
+        }
+    }
     function save(){
-        let x=round(3.779528/k*100)/100;
         if(check1.checked){
             let pic=document.createElementNS("http://www.w3.org/2000/svg",'svg');
-            let newArc=svg2arc.cloneNode();
-            newArc.setAttribute('fill','transparent');
-            newArc.setAttribute('style','fill:none');
-            let newSeg=seg.cloneNode();
-            newSeg.setAttribute('fill','transparent');
-            newSeg.setAttribute('style','fill:none');
-            pic.append(newArc);
-            pic.append(newSeg);            
-            let svgDoc = '<svg width=\'350px\' height=\'350px\' version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >'+pic.innerHTML+'</svg>';
+            
+            let outR=Number(inputOutRad.value);
+            let ringW=Number(inputRingWidth.value);
+            let width=forSave1x1[0];
+            let height=forSave1x1[1];
+            let angle=360/nSeg*Math.PI/180;
+            let path=document.createElementNS("http://www.w3.org/2000/svg",'path');
+            let yoffset=(height-ringW)/2;
+            let x1=round(width/2-Math.sin(angle/2)*(outR-ringW));
+            let x2=round(width/2-Math.sin(angle/2)*(outR));
+            let x3=round(width/2+Math.sin(angle/2)*(outR-ringW));
+            let x4=round(width/2+Math.sin(angle/2)*(outR));
+            let y1=round(Math.cos(angle/2)*(outR-ringW));
+            let y2=round(Math.cos(angle/2)*(outR))-y1;
+            let arc1=myArc(width/2,yoffset-y1,outR-ringW,angle);
+            let arc2=myArc(width/2,yoffset-y1,outR,angle);
+            let lines='M'+x1+' '+yoffset+' L'+x2+' '+(yoffset+y2)+' M'+x3+' '+yoffset+' L'+x4+' '+(yoffset+y2);
+            path.setAttribute('d',(arc1+arc2+lines));
+            path.setAttribute('style','fill:none');
+            path.setAttribute('stroke','black');
+            pic.append(path);
+            let svgDoc = '<svg width=\''+width+'mm\' height=\''+height+'mm\' viewBox="0 0 '+width+' '+height+'" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >'+pic.innerHTML+'</svg>'
             let file = new File([svgDoc], "file.svg", {type: "image/svg+xml"});
-            saveAs(file);
-            svgDoc = '<svg width=\'1000px\' height=\'1000px\' version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><g transform=\'scale('+x+')\'>'+pic.innerHTML+'</g></svg>';
-            file = new File([svgDoc], "Nfile.svg", {type: "image/svg+xml"});            
-        }
-        if(check2.checked){
-            let newSeg=seg.cloneNode();
-            newSeg.setAttribute('fill','transparent');
-            newSeg.setAttribute('style','fill:white');
+            saveAs(file);          
+        }else if(check2.checked){
             let newImg=document.createElementNS("http://www.w3.org/2000/svg",'svg');
+            newImg.setAttribute('width','877px');
+            newImg.setAttribute('height','620px');
+            newImg.setAttribute('transform','scale(1.3)');
             let backGround=document.createElementNS("http://www.w3.org/2000/svg",'rect');
             backGround.setAttribute('style','fill:white');
             backGround.setAttribute('x','0');
@@ -333,56 +371,81 @@ input[type=range]::-moz-range-thumb {
             backGround.setAttribute('width','877');
             backGround.setAttribute('height','620');
             newImg.append(backGround);
-            let newGroup=document.createElementNS("http://www.w3.org/2000/svg",'g');
-            newGroup.innerHTML=svg2.innerHTML.replace('url(#img1)','transparent');
-            newGroup.setAttribute('transform','translate(400,50)');
-            newImg.setAttribute('width','877px');
-            newImg.setAttribute('height','620px');
+            let svg2Group=document.createElementNS("http://www.w3.org/2000/svg",'g');
+            svg2Group.innerHTML=svg2.innerHTML.replace('url(#img1)','transparent');
+            svg2Group.setAttribute('transform','translate(315,50)');
+            let container=document.createElementNS("http://www.w3.org/2000/svg",'g');
+            container.setAttribute('transform','translate(150,135)');
             let newPoly=fillPoly.cloneNode();
             newPoly.setAttribute('fill','transparent');
-            newPoly.setAttribute('id','newPoly');
-            newImg.append(newPoly);
-            newImg.append(sizeLineH.cloneNode());
-            newImg.append(sizeLineV.cloneNode());
-            newImg.append(svg1sizeText1.cloneNode(true));
-            newImg.append(svg1sizeText2.cloneNode(true));
-            newImg.append(offline1.cloneNode());
-            newImg.append(circ.cloneNode());
-            newImg.append(circ2.cloneNode());
-            newImg.append(circ3.cloneNode());
-            let svgCenter='200px 200px';
+            newPoly.setAttribute('id','newPoly');            
+            newImg.append(container);
+            container.append(newPoly);
+            container.append(sizeLineH.cloneNode());
+            container.append(sizeLineV.cloneNode());
+            container.append(svg1sizeText1.cloneNode(true));
+            container.append(svg1sizeText2.cloneNode(true));
+            container.append(offline1.cloneNode());
+            container.append(circ.cloneNode());
+            container.append(circ2.cloneNode());
+            container.append(circ3.cloneNode());
+            let svgCenter='175px 175px';
             for(let i=1;i<nSeg;i++){
                         let newUse=document.createElementNS("http://www.w3.org/2000/svg", "use");
                         newUse.setAttribute('href','#newPoly');
                         newUse.setAttribute('transform-origin',svgCenter);
                         newUse.setAttribute('transform','rotate('+(360/nSeg*i)+')');
-                        newImg.append(newUse);
+                        container.append(newUse);
                     }
-            newImg.append(newGroup);
+            container.append(svg2Group);
             saveSvgAsPng(newImg,'file.png');
-        }
-        if(check3.checked){
+        }else{
             let pic=document.createElementNS("http://www.w3.org/2000/svg",'svg');
-            let newGroup=document.createElementNS("http://www.w3.org/2000/svg",'g');
-            let Group2=document.createElementNS("http://www.w3.org/2000/svg",'g');
-            let Group3=document.createElementNS("http://www.w3.org/2000/svg",'g');
+            let k=3.78/1.25;
+            let width=round(forSave1x1[0]*k);
+            let height=round(forSave1x1[1]*k);
             
-            newGroup.setAttribute('transform','translate('+((forSave1x1[0]/2-150))+','+((forSave1x1[1]/2-150))+')');
-            let newSeg=seg.cloneNode();
-            newSeg.setAttribute('style','fill:white');
-            let newArc=svg2arc.cloneNode();
-            newArc.setAttribute('style','fill:none');
-            pic.append(Group3);
-            Group3.append(Group2);
-            Group2.append(newGroup);
-            newGroup.append(newArc);
-            newGroup.append(newSeg);
-            newGroup.setAttribute('transform','translate(-150,-150)');
-            Group2.setAttribute('transform','scale('+3.78/(k)+')');
-            Group3.setAttribute('transform','translate('+((3.78*forSave1x1[0]/2))+','+((3.78*forSave1x1[1]/2))+')');
-            pic.setAttribute('width',(3.78*forSave1x1[0]+10)+'px');
-            pic.setAttribute('height',(3.78*forSave1x1[1]+10)+'px');
-            saveSvgAsPng(pic,'file1x1.png');
+            pic.setAttribute('width',(width+'px'));
+            pic.setAttribute('height',(height+'px'));
+            console.log('width'+pic.getAttribute('width'));
+            console.log('height'+pic.getAttribute('height'));
+            pic.setAttribute('viewBox',('0 0 '+width+' '+height));
+            
+            let outR=Number(inputOutRad.value)*k;
+            let ringW=Number(inputRingWidth.value)*k;
+            let marginOut=Number(inputMarginOuter.value)*k;
+            let angle=360/nSeg*Math.PI/180;
+            let path=document.createElementNS("http://www.w3.org/2000/svg",'path');
+            let rect=document.createElementNS("http://www.w3.org/2000/svg",'rect');
+            rect.setAttribute('width',width);
+            rect.setAttribute('height',height);
+            rect.setAttribute('style','fill:white');
+            let x1=round(width/2-forSave1x1[2]*k/2);
+            let x2=round(width/2-forSave1x1[0]*k/2);
+            let x3=round(width/2+forSave1x1[2]*k/2);
+            let x4=round(width/2+forSave1x1[0]*k/2);
+            let x5=round(width/2-Math.sin(angle/2)*(outR-ringW));
+            let x6=round(width/2-Math.sin(angle/2)*(outR));
+            let x7=round(width/2+Math.sin(angle/2)*(outR-ringW));
+            let x8=round(width/2+Math.sin(angle/2)*(outR));
+            let y2=height;
+            let yoffset=outR+marginOut-height;
+            
+                
+            let arc1=myArc(width/2,-yoffset,outR-ringW,angle);
+            let arc2=myArc(width/2,-yoffset,outR,angle);
+            
+            let lines='M'+x1+' 0 L'+x2+' '+y2+' L'+x4+' '+y2+' L'+x3+' 0L'+x1+' 0';
+            path.setAttribute('d',(arc1+arc2+lines));
+            path.setAttribute('style','fill:none');
+            path.setAttribute('stroke','black');
+            pic.append(rect);
+            pic.append(path);
+            saveSvgAsPng(pic,'file1x1.png',{width:width,height:height});
+//            let svgDoc = '<svg width=\''+width+'\' height=\''+height+'\' version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >'+pic.innerHTML+'</svg>'
+//            let file = new File([svgDoc], "file.svg", {type: "image/svg+xml"});
+//            saveAs(file);
+            
         }
     }
     
@@ -459,13 +522,12 @@ input[type=range]::-moz-range-thumb {
         sizeLineEl.setAttribute('stroke','black');
     }
     function myArc(xc,yc,r,angle){
-//возвращает строку для отрисовки дуги в svg path;
-            
-            let xstart=xc+Math.sin(angle/2)*r;
-            let ystart=yc+Math.cos(angle/2)*r;
-            let xend=xc-Math.sin(angle/2)*r;
-            let yend=ystart;
-            return ('M'+xstart+' '+ystart+' A '+r+' '+r+' 0 0 1 '+xend+' '+yend+' ');
+//возвращает строку для отрисовки дуги в svg path;            
+        let xstart=round(xc+Math.sin(angle/2)*r);
+        let ystart=round(yc+Math.cos(angle/2)*r);
+        let xend=round(xc-Math.sin(angle/2)*r);
+        let yend=ystart;
+        return ('M'+xstart+' '+ystart+' A '+r+' '+r+' 0 0 1 '+xend+' '+yend+' ');
         }
     let svgL=Number(svg.getAttribute('width').slice(0,-2));
     let x=svgL/2;
@@ -481,7 +543,7 @@ input[type=range]::-moz-range-thumb {
     function Draw(){
         let x=svgL/2;
         let y=x;
-        group.innerHTML='';
+        group.innerHTML='';        
         nSeg=Number(inputSegments.value);
         let outR=Number(inputOutRad.value);
         let ringW=Number(inputRingWidth.value);
@@ -546,7 +608,7 @@ input[type=range]::-moz-range-thumb {
         let l=Math.sin(angle/2)*a;
         let c=b-2*l;
         let h=Math.cos(angle/2)*a;
-        forSave1x1=[round(b),round(h)];
+        forSave1x1=[round(b),round(h),round(c)];
         a*=k;
         b*=k;
         c*=k;
@@ -617,10 +679,11 @@ input[type=range]::-moz-range-thumb {
         size(sizeLine1,point0,point1,'#ff3300',x,y,x+outR,y,-150,svgCenter);//центр-внешний радиус
         size(sizeLine2,point2,point3,'#00e600',x-outR,y,x-outR+ringW,y,10,svgCenter);
         size(sizeLine3,point4,point5,'#0099ff',x-outR+ringW,y,x-outR+ringW+marginInn,y,90+360/nSeg/2,svgCenter);
-        size(sizeLine4,point6,point7,'#cc6600',x,y-outR,x,y-outR-marginOut,360/nSeg,svgCenter);        
+        size(sizeLine4,point6,point7,'#cc6600',x,y-outR,x,y-outR-marginOut,360/nSeg,svgCenter);
 //*************************svg2*******************
-        y=150;//(svg2L/2)
-        x=150;
+        y=125;//(svg2L/2)
+        x=125;
+        if(nSeg==4){x=x-10}
         cs=[x-b/2,y+h/2,x-c/2,y-h/2,x+c/2,y-h/2,x+b/2,y+h/2];
         coors='';
         for(let i=0;i<4;i++){
