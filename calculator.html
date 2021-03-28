@@ -1,13 +1,12 @@
 <html>
 <head>
     <style>
-        
-        input[type=number] {
-            width:4em;
+        body{
+            margin:0;
         }
-        
-        svg{
-            margin: 5px;
+        input[type=number] {
+            width:3em;
+            font-size:medium;
         }
         
         input[type=range] {
@@ -92,18 +91,20 @@ input[type=range]::-moz-range-thumb {
 @media screen and (orientation: portrait) {
     .pics{
         flex-direction: row;
+        align-items:center;
     }
     .blocks{
         flex-direction: column;
     }
     .sliders{
-        margin-left: 20px;
+        margin-left: 40px;
     }
         }
 
 @media screen and (orientation: landscape) {
     .pics{
       flex-direction: column;
+        align-items:center;
     }
     .blocks{
         flex-direction: row;
@@ -111,6 +112,7 @@ input[type=range]::-moz-range-thumb {
     .sliders{
         margin-top: 100px;
     }
+    
 }
         #button{
             font-size: 16px;
@@ -141,12 +143,13 @@ input[type=range]::-moz-range-thumb {
             touch-action: none;
             border-bottom: 1px solid #c5bcbc;
             border-top: 1px solid #c5bcbc;
+            font-size: large;
         }
         svg{
 /*            border: solid black 1px;*/
         }
         .label{
-            font-size: 17px;
+            font-size: medium;
         }
     </style>
     
@@ -164,7 +167,7 @@ input[type=range]::-moz-range-thumb {
     </pattern>
         </defs>        
     </svg>
-    <svg width="250px" height="250px" id='svg2'>        
+    <svg width="350px" height="350px" id='svg2'>        
     </svg>
     <br>
     </div>    
@@ -198,7 +201,6 @@ input[type=range]::-moz-range-thumb {
 <script src="FileSaver.js"></script>
 <script src="saveSvgAsPng.js"></script>
 <script>
-    alert(window.devicePixelRatio);
     let inputSegments=document.getElementById('inputSegments');
     let outputSegments=document.getElementById('outputSegments');
     let inputOutRad=document.getElementById('inputOutRad');
@@ -209,7 +211,6 @@ input[type=range]::-moz-range-thumb {
     let otputMarginInner=document.getElementById('outputMarginInner');
     let inputMarginOuter=document.getElementById('inputMarginOuter');
     let outputMarginOuter=document.getElementById('outputMarginOuter');
-//    let group=document.getElementById('group');
     let button=document.getElementById('button');
     let rwm=document.getElementById('rwm');
     let mim=document.getElementById('mim');
@@ -333,10 +334,10 @@ input[type=range]::-moz-range-thumb {
             check3.checked=true;
         }
     }
+    
     function save(){
         if(check1.checked){
             let pic=document.createElementNS("http://www.w3.org/2000/svg",'svg');
-            
             let outR=Number(inputOutRad.value);
             let ringW=Number(inputRingWidth.value);
             let width=forSave1x1[0];
@@ -362,8 +363,8 @@ input[type=range]::-moz-range-thumb {
             saveAs(file);          
         }else if(check2.checked){
             let newImg=document.createElementNS("http://www.w3.org/2000/svg",'svg');
-            newImg.setAttribute('width','877px');
-            newImg.setAttribute('height','620px');
+            newImg.setAttribute('width',(877/window.devicePixelRatio+'px'));
+            newImg.setAttribute('height',(620/window.devicePixelRatio+'px'));
             newImg.setAttribute('transform','scale(1.3)');
             let backGround=document.createElementNS("http://www.w3.org/2000/svg",'rect');
             backGround.setAttribute('style','fill:white');
@@ -402,7 +403,7 @@ input[type=range]::-moz-range-thumb {
             saveSvgAsPng(newImg,'file.png');
         }else{
             let pic=document.createElementNS("http://www.w3.org/2000/svg",'svg');
-            let k=3.78/1.25;
+            let k=3.78/window.devicePixelRatio;
             let width=round(forSave1x1[0]*k);
             let height=round(forSave1x1[1]*k);
             
@@ -448,8 +449,7 @@ input[type=range]::-moz-range-thumb {
 //            saveAs(file);
             
         }
-    }
-    
+    }    
     function size(sizeLineEl,point,point2,value,x1,y1,x2,y2,angle,svgCenter){ 
         x1=String(x1);
         y1=String(y1);
@@ -530,6 +530,36 @@ input[type=range]::-moz-range-thumb {
         let yend=ystart;
         return ('M'+xstart+' '+ystart+' A '+r+' '+r+' 0 0 1 '+xend+' '+yend+' ');
         }
+    
+    let deviceK=round(Math.sqrt(window.devicePixelRatio));
+    function svgSize(svg,fl=1){
+        let w=Number(svg.getAttribute('width').slice(0,-2));
+        if((w*(deviceK))>(window.innerWidth/2)){
+            w=round((window.innerWidth/2));
+        }else{
+            w=round(w*(deviceK));
+        }
+        svg.setAttribute('width',(w+'px'));
+        if(fl){svg.setAttribute('height',(w+'px'))}
+        else{svg.setAttribute('height',(w*0.7+'px'))}
+        
+    }
+    svgSize(svg);
+    svgSize(svg2,0);
+    
+//    let svg1Width=Number(svg.getAttribute('width').slice(0,-2));
+//    let svg1Height=Number(svg.getAttribute('height').slice(0,-2));
+//    let svg2Width=Number(svg2.getAttribute('width').slice(0,-2));
+//    let svg2Height=Number(svg2.getAttribute('height').slice(0,-2));
+    
+    
+  
+    
+//    svg.setAttribute('width',(svg1Width*deviceK+'px'));
+//    svg.setAttribute('height',(svg2Width*deviceK+'px'));
+//    svg2.setAttribute('width',(svg2Width*deviceK+'px'));
+//    svg2.setAttribute('height',(svg2Height*deviceK+'px'));
+    
     let svgL=Number(svg.getAttribute('width').slice(0,-2));
     let x=svgL/2;
     let r=x-40;
@@ -682,9 +712,10 @@ input[type=range]::-moz-range-thumb {
         size(sizeLine3,point4,point5,'#0099ff',x-outR+ringW,y,x-outR+ringW+marginInn,y,90+360/nSeg/2,svgCenter);
         size(sizeLine4,point6,point7,'#cc6600',x,y-outR,x,y-outR-marginOut,360/nSeg,svgCenter);
 //*************************svg2*******************
-        y=125;//(svg2L/2)
-        x=125;
-        if(nSeg==4){x=x-10}
+        
+        x=Number(svg2.getAttribute('width').slice(0,-2))/2;//(svg2L/2);
+        y=x*0.7;
+        if(nSeg<6){x=x-10}
         cs=[x-b/2,y+h/2,x-c/2,y-h/2,x+c/2,y-h/2,x+b/2,y+h/2];
         coors='';
         for(let i=0;i<4;i++){
