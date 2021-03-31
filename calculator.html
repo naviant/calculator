@@ -334,7 +334,6 @@ input[type=range]::-moz-range-thumb {
             check3.checked=true;
         }
     }
-    
     function save(){
         if(check1.checked){
             let pic=document.createElementNS("http://www.w3.org/2000/svg",'svg');
@@ -359,13 +358,15 @@ input[type=range]::-moz-range-thumb {
             path.setAttribute('stroke','black');
             pic.append(path);
             let svgDoc = '<svg width=\''+width+'mm\' height=\''+height+'mm\' viewBox="0 0 '+width+' '+height+'" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >'+pic.innerHTML+'</svg>'
-            let file = new File([svgDoc], "file.svg", {type: "image/svg+xml"});
-            saveAs(file);          
+            let file = new File([svgDoc], (fileName+'.svg'), {type: "image/svg+xml"});
+            saveAs(file);
         }else if(check2.checked){
+            let outR=Number(inputOutRad.value);
+            let ringW=Number(inputRingWidth.value);
             let newImg=document.createElementNS("http://www.w3.org/2000/svg",'svg');
             newImg.setAttribute('width',(877/window.devicePixelRatio+'px'));
             newImg.setAttribute('height',(620/window.devicePixelRatio+'px'));
-            newImg.setAttribute('transform','scale(1.3)');
+            let scaleK=round(877/(window.devicePixelRatio*svgL*2));
             let backGround=document.createElementNS("http://www.w3.org/2000/svg",'rect');
             backGround.setAttribute('style','fill:white');
             backGround.setAttribute('x','0');
@@ -375,13 +376,14 @@ input[type=range]::-moz-range-thumb {
             newImg.append(backGround);
             let svg2Group=document.createElementNS("http://www.w3.org/2000/svg",'g');
             svg2Group.innerHTML=svg2.innerHTML.replace('url(#img1)','transparent');
-            svg2Group.setAttribute('transform','translate(315,50)');
+            svg2Group.setAttribute('transform','translate('+svgL+','+svgL/4+')');
             let container=document.createElementNS("http://www.w3.org/2000/svg",'g');
-            container.setAttribute('transform','translate(150,135)');
+            let scaleContainer=document.createElementNS("http://www.w3.org/2000/svg",'g');
+            container.setAttribute('transform','translate('+(438/window.devicePixelRatio-svgL*scaleK)+','+(310/window.devicePixelRatio-svgL*scaleK/2)+')');
             let newPoly=fillPoly.cloneNode();
             newPoly.setAttribute('fill','transparent');
             newPoly.setAttribute('id','newPoly');            
-            newImg.append(container);
+            newImg.append(scaleContainer);
             container.append(newPoly);
             container.append(sizeLineH.cloneNode());
             container.append(sizeLineV.cloneNode());
@@ -390,8 +392,9 @@ input[type=range]::-moz-range-thumb {
             container.append(offline1.cloneNode());
             container.append(circ.cloneNode());
             container.append(circ2.cloneNode());
-            container.append(circ3.cloneNode());
-            let svgCenter='175px 175px';
+            container.append(circ3.cloneNode());            
+            console.log('scaleK=',scaleK);
+            console.log('svgL=',svgL);
             for(let i=1;i<nSeg;i++){
                         let newUse=document.createElementNS("http://www.w3.org/2000/svg", "use");
                         newUse.setAttribute('href','#newPoly');
@@ -400,7 +403,9 @@ input[type=range]::-moz-range-thumb {
                         container.append(newUse);
                     }
             container.append(svg2Group);
-            saveSvgAsPng(newImg,'file.png');
+            scaleContainer.append(container);
+            scaleContainer.setAttribute('transform','scale('+scaleK+')');
+            saveSvgAsPng(newImg,('A4_'+fileName+'.png'));
         }else{
             let pic=document.createElementNS("http://www.w3.org/2000/svg",'svg');
             let k=3.78/window.devicePixelRatio;
@@ -443,11 +448,7 @@ input[type=range]::-moz-range-thumb {
             path.setAttribute('stroke','black');
             pic.append(rect);
             pic.append(path);
-            saveSvgAsPng(pic,'file1x1.png',{width:width,height:height});
-//            let svgDoc = '<svg width=\''+width+'\' height=\''+height+'\' version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >'+pic.innerHTML+'</svg>'
-//            let file = new File([svgDoc], "file.svg", {type: "image/svg+xml"});
-//            saveAs(file);
-            
+            saveSvgAsPng(pic,(fileName+'.png'),{width:width,height:height});
         }
     }    
     function size(sizeLineEl,point,point2,value,x1,y1,x2,y2,angle,svgCenter){ 
@@ -546,20 +547,7 @@ input[type=range]::-moz-range-thumb {
     }
     svgSize(svg);
     svgSize(svg2,0);
-    
-//    let svg1Width=Number(svg.getAttribute('width').slice(0,-2));
-//    let svg1Height=Number(svg.getAttribute('height').slice(0,-2));
-//    let svg2Width=Number(svg2.getAttribute('width').slice(0,-2));
-//    let svg2Height=Number(svg2.getAttribute('height').slice(0,-2));
-    
-    
-  
-    
-//    svg.setAttribute('width',(svg1Width*deviceK+'px'));
-//    svg.setAttribute('height',(svg2Width*deviceK+'px'));
-//    svg2.setAttribute('width',(svg2Width*deviceK+'px'));
-//    svg2.setAttribute('height',(svg2Height*deviceK+'px'));
-    
+ 
     let svgL=Number(svg.getAttribute('width').slice(0,-2));
     let x=svgL/2;
     let r=x-40;
@@ -571,6 +559,8 @@ input[type=range]::-moz-range-thumb {
     let imgSizeMin=round(2*r/1.41);
     let forSave1x1;
     let k;
+    let svgCenter;
+    let fileName;
     function Draw(){
         let x=svgL/2;
         let y=x;
@@ -578,6 +568,7 @@ input[type=range]::-moz-range-thumb {
         nSeg=Number(inputSegments.value);
         let outR=Number(inputOutRad.value);
         let ringW=Number(inputRingWidth.value);
+        fileName=(String(nSeg)+'seg_'+outR+'outR_'+ringW+'width');
         let marginInn=Number(inputMarginInner.value);
         let marginOut=Number(inputMarginOuter.value);           
         let angle=360/nSeg*Math.PI/180;
@@ -663,7 +654,7 @@ input[type=range]::-moz-range-thumb {
             coors+=cs[i*2+1];
             coors+=',';
         }
-        let svgCenter=svgL/2+'px '+svgL/2+'px';
+        svgCenter=svgL/2+'px '+svgL/2+'px';
         coors=coors.slice(0,-1);
         fillPoly.setAttribute('points',coors);
         fillPoly.setAttribute('fill','url(#img1)');
