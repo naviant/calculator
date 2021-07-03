@@ -161,10 +161,12 @@ input[type=range]::-moz-range-thumb {
     <div class='pics'>
     <svg width="350px" height="320px" id='svg1'>
         <defs>
+<!--
     <pattern id="img1" width="1" height="1" >
         <image xlink:href="texture3.jpg"
             width="250" height="250" id='img' />
     </pattern>
+-->
         </defs>        
     </svg>
     <svg width="350px" height="350px" id='svg2'>        
@@ -1214,8 +1216,8 @@ if (typeof module !== 'undefined') {
         marginInn*=k;
         r2*=k;
         let imgSize=round(imgSizeMin*Math.sqrt(k/kMin));
-        document.getElementById('img').setAttribute('width',String(imgSize));
-        document.getElementById('img').setAttribute('height',String(imgSize));
+//        document.getElementById('img').setAttribute('width',String(imgSize));
+//        document.getElementById('img').setAttribute('height',String(imgSize));
         let cs=[x-b/2,y-outR-marginOut,x+b/2,y-outR-marginOut,x+c/2,y-outR-marginOut+h,x-c/2,y-outR-marginOut+h];
         let coors='';
         for(let i=0;i<4;i++){
