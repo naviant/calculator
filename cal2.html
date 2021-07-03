@@ -1,0 +1,204 @@
+<html>
+<head>
+    <style>
+        body{
+            margin:0;
+        }
+        input[type=number] {
+            width:3em;
+            font-size:medium;
+        }
+        
+        input[type=range] {
+            -webkit-appearance: none; /* Hides the slider so that custom slider can be made */
+            touch-action: none;
+            background: white ;
+            border: 1px solid black;
+            border-radius: 3px;
+            height: 6px;
+            margin-top: 15px;
+        }
+        #inputOutRad[type=range]{
+            background: red; 
+            border: 1px solid red;            
+        }
+        #inputRingWidth[type=range]{
+            background: #00b300; 
+            border: 1px solid #00b300;            
+        }
+        #inputMarginInner[type=range]{
+            background: #0099ff;
+            border: 1px solid #0099ff;
+        }
+        #inputMarginOuter[type=range]{
+            background: #cc6600;
+            border: 1px solid #cc6600;
+        }
+        input[type=range]:focus {
+            outline: none; /*Removes the blue border. You should probably do some kind of focus styling for accessibility reasons though. */
+        }
+input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  border: 1px solid #000000;
+  height: 20px;
+  width: 20px;
+  border-radius: 50%;
+  background: #ffffff;
+}
+        input[type=range]:hover::-webkit-slider-thumb {
+  background:#e6e6e6;
+}
+
+/* All the same stuff for Firefox */
+input[type=range]::-moz-range-thumb {
+  border: 1px solid #000000;
+  height: 20px;
+  width: 20px;
+  border-radius: 50%;
+  background: #ffffff;
+}
+        input[type=range]:hover::-moz-range-thumb {
+  background:#e6e6e6;
+}
+
+/* All the same stuff for IE */
+    input[type=range]::-ms-thumb {
+      border: 1px solid #000000;
+      height: 20px;
+      width: 20px;
+      border-radius: 50%;
+      background: #ffffff;
+    }
+        input[type=range]:hover::-ms-thumb {
+            background:#e6e6e6;}
+    input[type=range]::-ms-thumb {
+      border: 1px solid #000000;
+      height: 20px;
+      width: 20px;
+      border-radius: 50%;
+      background: #ffffff;
+    }
+        .pics{
+            display: flex;
+            align-items: center;
+        }
+        .blocks{
+            display: flex;
+        }
+        .sliders{
+            text-align: justify;            
+        }
+@media screen and (orientation: portrait) {
+    .pics{
+        flex-direction: row;
+        align-items:center;
+    }
+    .blocks{
+        flex-direction: column;
+    }
+    .sliders{
+        margin-left: 40px;
+    }
+        }
+
+@media screen and (orientation: landscape) {
+    .pics{
+      flex-direction: column;
+        align-items:center;
+    }
+    .blocks{
+        flex-direction: row;
+    }
+    .sliders{
+        margin-top: 100px;
+    }
+    
+}
+        #button{
+            font-size: 16px;
+            border: 1px solid black;
+            border-radius: 0.3em;
+            padding: 5px;
+            padding-left: 10px;
+            padding-right: 10px;
+            margin-top: 20px;
+        }
+        #mainContainer{
+            display: inline-block;
+            margin:auto;
+        }
+        #mainOutContainer{
+            text-align: center;
+        }
+        #saveBlock{
+            display: inline-block;
+            padding: 10px;
+            margin-top: 20px;
+        }
+        .check{
+            padding-bottom: 3px;
+            margin-left: 4px;
+            margin-right: 4px;
+            user-select: none;
+            touch-action: none;
+            border-bottom: 1px solid #c5bcbc;
+            border-top: 1px solid #c5bcbc;
+            font-size: large;
+        }
+        svg{
+/*            border: solid black 1px;*/
+        }
+        .label{
+            font-size: medium;
+        }
+    </style>
+    
+</head>
+<body>
+    <div id='mainOutContainer'>
+    <div id='mainContainer'>
+    <div class='blocks'>
+    <div class='pics'>
+    <svg width="350px" height="320px" id='svg1'>
+        <defs>
+<!--
+    <pattern id="img1" width="1" height="1" >
+        <image xlink:href="texture3.jpg"
+            width="250" height="250" id='img' />
+    </pattern>
+-->
+        </defs>        
+    </svg>
+    <svg width="350px" height="350px" id='svg2'>        
+    </svg>
+    <br>
+    </div>    
+     
+    <div class='sliders'>
+        <label class="label"><input type="range" min="4" max="20" id='inputSegments' value="6"><input type="number" min="4" max="20" id='outputSegments'>
+        Segments (4-20)</label>
+    <br>
+        <label class="label"><input type="range" min="50" max="500" id='inputOutRad' background-color='white'><input type="number" min="50" max="500" id='outputOutRad'>
+        Outside radius (50-500mm)</label>
+    <br>
+        <label class="label"><input type="range" min="10" max="275" id='inputRingWidth'><input type="number" min="10" max="275" id='outputRingWidth'>
+    Ring width (10-<span id='rwm'>275</span>mm)</label>
+    <br>
+        <label class="label"><input type="range" min="0" max="70" value='30' id='inputMarginInner'><input type="number" min="0" max="70" id='outputMarginInner'>
+    Margin inner (0-<span id='mim'>70</span>mm)</label>
+    <br>
+        <label class="label"><input type="range" min="0" max="200" value='50' id='inputMarginOuter'><input type="number" min="0" max="200" id='outputMarginOuter'>
+    Margin outer (0-200mm)</label>
+    <br></div>
+    </div>    
+    <div id='saveBlock'>
+        <label class='check'><input type='checkbox' id='check1' checked='true'>.svg</label>
+        <label class='check'><input type='checkbox' id='check2'>A4 .png</label>
+        <label class='check'><input type='checkbox' id='check3'>(1:1) .png</label><br>
+        <input value="Save" type="button" id='button'>
+    </div>
+    </div>
+    </div>    
+</body>
+
+</html>
